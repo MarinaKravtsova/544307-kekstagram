@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Марина Кравцова](https://up.htmlacademy.ru/javascript/12/user/544307).
-* Наставник: `Неизвестно`.
+* Наставник: [Владислав Балабанович](https://up.htmlacademy.ru/javascript/12/user/6394).
 
 ---
 
