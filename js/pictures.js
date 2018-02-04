@@ -71,7 +71,7 @@ var pictureFunction = function (photoObject) {
  */
 var picturesContainer = document.querySelector('.pictures');
 var fragment = document.createDocumentFragment();
-for (var y = 1; y < photos.length; y++) {
+for (var y = 0; y < photos.length; y++) {
   fragment.appendChild(pictureFunction(photos[y]));
 }
 picturesContainer.appendChild(fragment);
