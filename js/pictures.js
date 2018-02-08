@@ -12,6 +12,8 @@ var LIKE_MAX = 200;
 var COMMENT_MIN = 1;
 var COMMENT_MAX = 2;
 var photos = [];// Массив с фотографиями 1-25
+var commentsArray = [];// Массив для 1 или 2 комментов
+
 /**
  * Фцнкция генерирущая случайное число от max до min
  * @param {number} max Максимальное число
@@ -19,44 +21,51 @@ var photos = [];// Массив с фотографиями 1-25
  * @return {number}
  */
 var getRandomNumber = function (max, min) {
-  var RandomNumber = Math.floor(Math.random() * (max - min) + min);
+  var RandomNumber = Math.round(Math.random() * (max - min) + min);
 
   return RandomNumber;
 };
+
 /**
  * Фцнкция генерирущая объект
  * @param {object} photo Объект с параметрами url, likes, comments, commentsCount
- * @return {objct}
+ * @return {objct} photo Объект
  */
 var photoFunction = function () {
 
-  if ((Math.floor(Math.random() * (10 - 0)) + 0) % 2 === 0) {
+  commentsArray = [];
+
+  for (var x = 0; x < getRandomNumber(COMMENT_MAX, COMMENT_MIN); x++) {
     var comment = COMMENTS_LIST[getRandomNumber(COMMENTS_LIST.length, 0)];
-    var count = COMMENT_MIN;
-  } else {
-    comment = COMMENTS_LIST[getRandomNumber(COMMENTS_LIST.length, 0)] + '    ' + COMMENTS_LIST[getRandomNumber(COMMENTS_LIST.length, 0)];
-    count = COMMENT_MAX;
+
+    commentsArray.push(comment);
   }
 
   var photo = {
     url: 'photos/' + i + '.jpg',
     likes: getRandomNumber(LIKE_MAX, LIKE_MIN),
-    comments: comment,
-    commentsCount: count
+    comments: commentsArray
   };
   return photo;
 };
+
 /**
  * Заполнение массива
  */
 for (var i = 1; i <= PHOTO_NUMBERS; i++) {
   photos[i - 1] = photoFunction();
 }
+
 /**
  * Создание дом-элементов
  */
 var pictureTemplate = document.querySelector('#picture-template').content;
 
+/**
+ * Фцнкция генерирующая дом-элемент
+ * @param  {type} photoObject объект
+ * @return {type} pictureElement объект
+ */
 var pictureFunction = function (photoObject) {
   var pictureElement = pictureTemplate.cloneNode(true);
 
@@ -66,15 +75,18 @@ var pictureFunction = function (photoObject) {
 
   return pictureElement;
 };
+
 /**
  * Отрисовка сгенерированных дом-элементов
  */
 var picturesContainer = document.querySelector('.pictures');
 var fragment = document.createDocumentFragment();
+
 for (var y = 0; y < photos.length; y++) {
   fragment.appendChild(pictureFunction(photos[y]));
 }
 picturesContainer.appendChild(fragment);
+
 /**
  * Скрытая фотография
  */
@@ -83,4 +95,4 @@ userDialog.classList.remove('hidden');
 
 userDialog.querySelector('.gallery-overlay-image').setAttribute('src', photos[0].url);
 userDialog.querySelector('.likes-count').textContent = photos[0].likes;
-userDialog.querySelector('.comments-count').textContent = photos[0].commentsCount;
+userDialog.querySelector('.comments-count').textContent = photos[0].comments.length;
