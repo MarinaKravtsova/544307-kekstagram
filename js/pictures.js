@@ -92,15 +92,16 @@ for (var y = 0; y < photos.length; y++) {
 picturesContainer.appendChild(fragment);
 
 /**
- * Скрытая фотография
- */
+  * Функция генерирущая фото на весь экран
+  * @param  {type} index
+  */
 var fullScreenPhoto = function (index) {
-var userDialog = document.querySelector('.gallery-overlay');
+  var userDialog = document.querySelector('.gallery-overlay');
   userDialog.classList.remove('hidden');
 
-userDialog.querySelector('.gallery-overlay-image').setAttribute('src', photos[index].url);
-userDialog.querySelector('.likes-count').textContent = photos[index].likes;
-userDialog.querySelector('.comments-count').textContent = photos[index].comments.length;
+  userDialog.querySelector('.gallery-overlay-image').setAttribute('src', photos[index].url);
+  userDialog.querySelector('.likes-count').textContent = photos[index].likes;
+  userDialog.querySelector('.comments-count').textContent = photos[index].comments.length;
 };
 
 /**
