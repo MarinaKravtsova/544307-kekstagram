@@ -204,12 +204,25 @@ uploadEffectHeat.addEventListener('click', function () {
 });
 
 /**
- * обработчик событий, который вызывает показ оверлея с соответствующими данными
+ * обработчик событий, который вызывает показ оверлея с соответствующими данными / открытие и закрытие его
  */
 document.addEventListener('click', function (evt) {
   if (evt.target.tagName === 'IMG') {
     var id = evt.target.id;
     fullScreenPhoto(id);
+  }
+});
+
+var galleryOverlayClose = document.querySelector('.gallery-overlay-close');
+var userDialog = document.querySelector('.gallery-overlay');
+
+galleryOverlayClose.addEventListener('click', function () {
+  userDialog.classList.add('hidden');
+});
+
+document.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    userDialog.classList.add('hidden');
   }
 });
 
