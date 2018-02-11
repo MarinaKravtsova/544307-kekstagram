@@ -1,4 +1,5 @@
 'use strict';
+
 var COMMENTS_LIST = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.!',
@@ -12,8 +13,10 @@ var LIKE_MAX = 200;
 var COMMENT_MIN = 1;
 var COMMENT_MAX = 2;
 var ESC_KEYCODE = 27;
-var photos = [];// Массив с фотографиями 1-25
-var commentsArray = [];// Массив для 1 или 2 комментов
+var STEP = 25;
+var RESIZE_MAX = 100;
+var RESIZE_MIN = 25;
+var RESIZE_DEFAULT = 100;
 
 /**
  * Фцнкция генерирущая случайное число от max до min
@@ -30,8 +33,10 @@ var getRandomNumber = function (max, min) {
 /**
  * Фцнкция генерирущая объект
  * @param {object} photo Объект с параметрами url, likes, comments, commentsCount
- * @return {objct} photo Объект
+ * @return {object} photo Объект
  */
+var commentsArray = [];// Массив для 1 или 2 комментов
+
 var photoFunction = function () {
 
   commentsArray = [];
@@ -53,6 +58,8 @@ var photoFunction = function () {
 /**
  * Заполнение массива
  */
+var photos = [];// Массив с фотографиями 1-25
+
 for (var i = 1; i <= PHOTO_NUMBERS; i++) {
   photos[i - 1] = photoFunction();
 }
@@ -112,6 +119,8 @@ var uploadForm = document.querySelector('.upload-overlay');
 
 uploadFile.addEventListener('change', function () {
   uploadForm.classList.remove('hidden');
+
+  uploadResizeControlsValue.setAttribute('value', RESIZE_DEFAULT + '%');
 });
 
 var uploadFormClose = document.querySelector('#upload-cancel');
@@ -119,14 +128,16 @@ var uploadFormClose = document.querySelector('#upload-cancel');
 uploadFormClose.addEventListener('click', function () {
   uploadForm.classList.add('hidden');
 
-  // сбрасывать значение поля выбора файла #upload-file??????НЕПОНЯТНО
+  uploadFile.setAttribute('value', '');
+  // сбрасывать значение поля выбора файла #upload-file?????
 });
 
 document.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ESC_KEYCODE) {
     uploadForm.classList.add('hidden');
   }
-  // сбрасывать значение поля выбора файла #upload-file??????НЕПОНЯТНО
+  uploadFile.setAttribute('value', '');
+  // сбрасывать значение поля выбора файла #upload-file?????
 });
 
 /**
@@ -153,31 +164,43 @@ uploadEffectPin.addEventListener('mouseup', function () {
 uploadEffectNone.addEventListener('click', function () {
   effectImage.style = 'filter: none';
   uploadEffectLevel.classList.add('hidden');
+
+  effectImage.setAttribute('class', 'effect-image-preview effect-none');
 });
 
 uploadEffectChrome.addEventListener('click', function () {
   effectImage.style = 'filter: grayscale(0.2)';
   uploadEffectLevel.classList.remove('hidden');
+
+  effectImage.setAttribute('class', 'effect-image-preview effect-chrome');
 });
 
 uploadEffectSepia.addEventListener('click', function () {
   effectImage.style = 'filter: sepia(0.2)';
   uploadEffectLevel.classList.remove('hidden');
+
+  effectImage.setAttribute('class', 'effect-image-preview effect-sepia');
 });
 
 uploadEffectMarvin.addEventListener('click', function () {
   effectImage.style = 'filter: invert(20%)';
   uploadEffectLevel.classList.remove('hidden');
+
+  effectImage.setAttribute('class', 'effect-image-preview effect-marvin');
 });
 
 uploadEffectPhobos.addEventListener('click', function () {
   effectImage.style = 'filter: blur(0.6px)';
   uploadEffectLevel.classList.remove('hidden');
+
+  effectImage.setAttribute('class', 'effect-image-preview effect-phobos');
 });
 
 uploadEffectHeat.addEventListener('click', function () {
   effectImage.style = 'filter: brightness(0.6)';
   uploadEffectLevel.classList.remove('hidden');
+
+  effectImage.setAttribute('class', 'effect-image-preview effect-heat');
 });
 
 /**
@@ -197,30 +220,27 @@ var uploadResizeControlsDec = document.querySelector('.upload-resize-controls-bu
 var uploadResizeControlsInc = document.querySelector('.upload-resize-controls-button-inc');
 var uploadResizeControlsValue = document.querySelector('.upload-resize-controls-value');
 
-var STEP = 25;
-var RESIZE_MAX = 100;
-var RESIZE_MIN = 25;
-var RESIZE_DEFAULT = 100;
-
-uploadResizeControlsValue.value = RESIZE_DEFAULT;
+var uploadResizeValue = RESIZE_DEFAULT;
 
 uploadResizeControlsDec.addEventListener('click', function () {
-  if (uploadResizeControlsValue.value > RESIZE_MIN && uploadResizeControlsValue.value <= RESIZE_MAX) {
-    uploadResizeControlsValue.value = uploadResizeControlsValue.value - STEP;
-    effectImage.style = 'transform: scale(' + uploadResizeControlsValue.value / RESIZE_DEFAULT + ')';
+  if (uploadResizeValue > RESIZE_MIN && uploadResizeValue <= RESIZE_MAX) {
+    uploadResizeValue = uploadResizeValue - STEP;
+    effectImage.style = 'transform: scale(' + uploadResizeValue / RESIZE_DEFAULT + ')';
   } else {
-    uploadResizeControlsValue.value = RESIZE_DEFAULT;
-    effectImage.style = 'transform: scale(' + uploadResizeControlsValue.value / RESIZE_DEFAULT + ')';
+    uploadResizeValue = RESIZE_DEFAULT;
+    effectImage.style = 'transform: scale(' + uploadResizeValue / RESIZE_DEFAULT + ')';
   }
+  uploadResizeControlsValue.setAttribute('value', uploadResizeValue + '%');
 });
 
 uploadResizeControlsInc.addEventListener('click', function () {
-  if (uploadResizeControlsValue.value >= RESIZE_MIN && uploadResizeControlsValue.value < RESIZE_MAX) {
-    uploadResizeControlsValue.value = +uploadResizeControlsValue.value + STEP;
-    effectImage.style = 'transform: scale(' + uploadResizeControlsValue.value / RESIZE_DEFAULT + ')';
+  if (uploadResizeValue >= RESIZE_MIN && uploadResizeValue < RESIZE_MAX) {
+    uploadResizeValue = +uploadResizeValue + STEP;
+    effectImage.style = 'transform: scale(' + uploadResizeValue / RESIZE_DEFAULT + ')';
 
   } else {
-    uploadResizeControlsValue.value = RESIZE_DEFAULT;
-    effectImage.style = 'transform: scale(' + uploadResizeControlsValue.value / RESIZE_DEFAULT + ')';
+    uploadResizeValue = RESIZE_DEFAULT;
+    effectImage.style = 'transform: scale(' + uploadResizeValue / RESIZE_DEFAULT + ')';
   }
+  uploadResizeControlsValue.setAttribute('value', uploadResizeValue + '%');
 });
