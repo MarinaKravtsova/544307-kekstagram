@@ -6,13 +6,15 @@ var COMMENTS_LIST = [
   'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
   'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
   'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
-  'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'];
+  'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
+];
 var PHOTO_NUMBERS = 25;
 var LIKE_MIN = 15;
 var LIKE_MAX = 200;
 var COMMENT_MIN = 1;
 var COMMENT_MAX = 2;
 var ESC_KEYCODE = 27;
+var ENTER_KEYCODE = 13;
 var STEP = 25;
 var RESIZE_MAX = 100;
 var RESIZE_MIN = 25;
@@ -35,11 +37,9 @@ var getRandomNumber = function (max, min) {
  * @param {object} photo Объект с параметрами url, likes, comments, commentsCount
  * @return {object} photo Объект
  */
-var commentsArray = [];// Массив для 1 или 2 комментов
+var generatePhotoObject = function () {
 
-var photoFunction = function () {
-
-  commentsArray = [];
+  var commentsArray = [];// Массив для 1 или 2 комментов
 
   for (var x = 0; x < getRandomNumber(COMMENT_MAX, COMMENT_MIN); x++) {
     var comment = COMMENTS_LIST[getRandomNumber(COMMENTS_LIST.length, 0)];
@@ -55,18 +55,12 @@ var photoFunction = function () {
   return photo;
 };
 
-/**
- * Заполнение массива
- */
 var photos = [];// Массив с фотографиями 1-25
 
 for (var i = 1; i <= PHOTO_NUMBERS; i++) {
-  photos[i - 1] = photoFunction();
+  photos[i - 1] = generatePhotoObject();
 }
 
-/**
- * Создание дом-элементов
- */
 var pictureTemplate = document.querySelector('#picture-template').content;
 
 /**
@@ -74,7 +68,7 @@ var pictureTemplate = document.querySelector('#picture-template').content;
  * @param  {type} photoObject объект
  * @return {type} pictureElement объект
  */
-var pictureFunction = function (photoObject) {
+var generateDomElement = function (photoObject) {
   var pictureElement = pictureTemplate.cloneNode(true);
 
   pictureElement.querySelector('.picture img').setAttribute('src', photoObject.url);
@@ -88,13 +82,13 @@ var pictureFunction = function (photoObject) {
 };
 
 /**
- * Отрисовка сгенерированных дом-элементов
+ * ********Отрисовка сгенерированных дом-элементов
  */
 var picturesContainer = document.querySelector('.pictures');
 var fragment = document.createDocumentFragment();
 
 for (var y = 0; y < photos.length; y++) {
-  fragment.appendChild(pictureFunction(photos[y]));
+  fragment.appendChild(generateDomElement(photos[y]));
 }
 picturesContainer.appendChild(fragment);
 
@@ -102,7 +96,7 @@ picturesContainer.appendChild(fragment);
   * Функция генерирущая фото на весь экран
   * @param  {type} index
   */
-var fullScreenPhoto = function (index) {
+var generateFullScreenPhoto = function (index) {
   var userDialog = document.querySelector('.gallery-overlay');
   userDialog.classList.remove('hidden');
 
@@ -112,36 +106,94 @@ var fullScreenPhoto = function (index) {
 };
 
 /**
- * Загрузка изображения и показ формы редактирования
+ ******** Загрузка изображения и показ формы редактирования
  */
 var uploadFile = document.querySelector('#upload-file');
 var uploadForm = document.querySelector('.upload-overlay');
 
+/**
+ * Функция генерирущая стили фильтров
+ * @param  {type} filterType параметр функции описываюший класс используемого фильтра
+ * @param  {type} filter     параметр функции описываюший используемый фильтр
+ */
+var generateFilterStyle = function (filterType, filter) {
+  uploadEffectLevel.classList.remove('hidden');
+  effectImage.setAttribute('class', 'effect-image-preview' + ' ' + filterType);
+  effectImage.style = 'filter:' + filter + '; transform: scale(' + uploadResizeValue / RESIZE_DEFAULT + ')';
+};
+
 uploadFile.addEventListener('change', function () {
   uploadForm.classList.remove('hidden');
 
+  uploadEffectNone.addEventListener('click', function () {
+    generateFilterStyle('effect-none', 'none');
+
+    uploadEffectLevel.classList.add('hidden');
+  });
+
+  uploadEffectChrome.addEventListener('click', function () {
+    generateFilterStyle('effect-chrome', 'grayscale(0.2)');
+  });
+
+  uploadEffectSepia.addEventListener('click', function () {
+    generateFilterStyle('effect-sepia', 'sepia(0.2)');
+  });
+
+  uploadEffectMarvin.addEventListener('click', function () {
+    generateFilterStyle('effect-marvin', 'invert(20%)');
+  });
+
+  uploadEffectPhobos.addEventListener('click', function () {
+    generateFilterStyle('effect-phobos', 'blur(0.6px)');
+  });
+
+  uploadEffectHeat.addEventListener('click', function () {
+    generateFilterStyle('effect-heat', 'brightness(0.6)');
+  });
+
   uploadResizeControlsValue.setAttribute('value', RESIZE_DEFAULT + '%');
+
+  uploadEffectLevel.classList.add('hidden');
 });
+
+/* var removeEffectListener = function () {
+  uploadEffectChrome.removeEventListener('click', function () {});
+  uploadEffectSepia.removeEventListener('click', function () {});
+  uploadEffectMarvin.removeEventListener('click', function () {});
+  uploadEffectPhobos.removeEventListener('click', function () {});
+  uploadEffectHeat.removeEventListener('click', function () {});
+  uploadEffectLevel.removeEventListener('click', function () {});
+};
+*/
+
+var setDefaultParameter = function () {
+  uploadFile.value = ''; // сбрасывать значение поля выбора файла #upload-file?????
+  uploadResizeValue = RESIZE_DEFAULT;
+  generateFilterStyle('effect-none', 'none');
+  uploadEffectLevel.classList.add('hidden');
+  document.querySelector('#upload-effect-none').checked = true;
+};
 
 var uploadFormClose = document.querySelector('#upload-cancel');
 
 uploadFormClose.addEventListener('click', function () {
   uploadForm.classList.add('hidden');
 
-  uploadFile.setAttribute('value', '');
-  // сбрасывать значение поля выбора файла #upload-file?????
+  setDefaultParameter();
+  // removeEffectListener();
 });
 
 document.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ESC_KEYCODE) {
     uploadForm.classList.add('hidden');
+
+    setDefaultParameter();
   }
-  uploadFile.setAttribute('value', '');
-  // сбрасывать значение поля выбора файла #upload-file?????
+//  removeEffectListener();
 });
 
 /**
- * Применение эффекта для изображения
+ ********** Применение эффекта для изображения
  */
 var uploadEffectPin = document.querySelector('.upload-effect-level-pin');
 var effectImage = document.querySelector('.effect-image-preview');
@@ -161,55 +213,14 @@ uploadEffectPin.addEventListener('mouseup', function () {
   effectImage.style = 'filter: brightness(0.6)';
 });
 
-uploadEffectNone.addEventListener('click', function () {
-  effectImage.style = 'filter: none';
-  uploadEffectLevel.classList.add('hidden');
-
-  effectImage.setAttribute('class', 'effect-image-preview effect-none');
-});
-
-uploadEffectChrome.addEventListener('click', function () {
-  effectImage.style = 'filter: grayscale(0.2)';
-  uploadEffectLevel.classList.remove('hidden');
-
-  effectImage.setAttribute('class', 'effect-image-preview effect-chrome');
-});
-
-uploadEffectSepia.addEventListener('click', function () {
-  effectImage.style = 'filter: sepia(0.2)';
-  uploadEffectLevel.classList.remove('hidden');
-
-  effectImage.setAttribute('class', 'effect-image-preview effect-sepia');
-});
-
-uploadEffectMarvin.addEventListener('click', function () {
-  effectImage.style = 'filter: invert(20%)';
-  uploadEffectLevel.classList.remove('hidden');
-
-  effectImage.setAttribute('class', 'effect-image-preview effect-marvin');
-});
-
-uploadEffectPhobos.addEventListener('click', function () {
-  effectImage.style = 'filter: blur(0.6px)';
-  uploadEffectLevel.classList.remove('hidden');
-
-  effectImage.setAttribute('class', 'effect-image-preview effect-phobos');
-});
-
-uploadEffectHeat.addEventListener('click', function () {
-  effectImage.style = 'filter: brightness(0.6)';
-  uploadEffectLevel.classList.remove('hidden');
-
-  effectImage.setAttribute('class', 'effect-image-preview effect-heat');
-});
-
 /**
- * обработчик событий, который вызывает показ оверлея с соответствующими данными / открытие и закрытие его
+ * ***обработчик событий, который вызывает показ оверлея с
+ * ***соответствующими данными / открытие и закрытие его
  */
-document.addEventListener('click', function (evt) {
+document.querySelector('.pictures').addEventListener('click', function (evt) {
   if (evt.target.tagName === 'IMG') {
     var id = evt.target.id;
-    fullScreenPhoto(id);
+    generateFullScreenPhoto(id);
   }
 });
 
@@ -226,8 +237,14 @@ document.addEventListener('keydown', function (evt) {
   }
 });
 
+document.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    userDialog.classList.add('hidden');
+  }
+});
+
 /**
- * Редактирование размера изображения
+ ****** Редактирование размера изображения
  */
 var uploadResizeControlsDec = document.querySelector('.upload-resize-controls-button-dec');
 var uploadResizeControlsInc = document.querySelector('.upload-resize-controls-button-inc');
