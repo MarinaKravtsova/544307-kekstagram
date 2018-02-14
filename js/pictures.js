@@ -125,30 +125,12 @@ var generateFilterStyle = function (filterType, filter) {
 uploadFile.addEventListener('change', function () {
   uploadForm.classList.remove('hidden');
 
+  uploadForm.addEventListener('click', generateFormParameters);
+
   uploadEffectNone.addEventListener('click', function () {
     generateFilterStyle('effect-none', 'none');
 
     uploadEffectLevel.classList.add('hidden');
-  });
-
-  uploadEffectChrome.addEventListener('click', function () {
-    generateFilterStyle('effect-chrome', 'grayscale(0.2)');
-  });
-
-  uploadEffectSepia.addEventListener('click', function () {
-    generateFilterStyle('effect-sepia', 'sepia(0.2)');
-  });
-
-  uploadEffectMarvin.addEventListener('click', function () {
-    generateFilterStyle('effect-marvin', 'invert(20%)');
-  });
-
-  uploadEffectPhobos.addEventListener('click', function () {
-    generateFilterStyle('effect-phobos', 'blur(0.6px)');
-  });
-
-  uploadEffectHeat.addEventListener('click', function () {
-    generateFilterStyle('effect-heat', 'brightness(0.6)');
   });
 
   uploadResizeControlsValue.setAttribute('value', RESIZE_DEFAULT + '%');
@@ -156,18 +138,59 @@ uploadFile.addEventListener('change', function () {
   uploadEffectLevel.classList.add('hidden');
 });
 
-/* var removeEffectListener = function () {
-  uploadEffectChrome.removeEventListener('click', function () {});
-  uploadEffectSepia.removeEventListener('click', function () {});
-  uploadEffectMarvin.removeEventListener('click', function () {});
-  uploadEffectPhobos.removeEventListener('click', function () {});
-  uploadEffectHeat.removeEventListener('click', function () {});
-  uploadEffectLevel.removeEventListener('click', function () {});
-};
-*/
+/**
+ ****** Редактирование размера изображения
+ */
+var uploadResizeControlsDec = document.querySelector('.upload-resize-controls-button-dec');
+var uploadResizeControlsInc = document.querySelector('.upload-resize-controls-button-inc');
+var uploadResizeControlsValue = document.querySelector('.upload-resize-controls-value');
 
+var uploadResizeValue = RESIZE_DEFAULT;
+
+/**
+ * Функция генерирущая параментры формы для загружаемой фотографии
+ * @param  {type} evt
+ */
+var generateFormParameters = function (evt) {
+  if (evt.target === uploadEffectChrome) {
+    generateFilterStyle('effect-chrome', 'grayscale(0.2)');
+  } else if (evt.target === uploadEffectSepia) {
+    generateFilterStyle('effect-sepia', 'sepia(0.2)');
+  } else if (evt.target === uploadEffectMarvin) {
+    generateFilterStyle('effect-marvin', 'invert(20%)');
+  } else if (evt.target === uploadEffectPhobos) {
+    generateFilterStyle('effect-phobos', 'blur(0.6px)');
+  } else if (evt.target === uploadEffectHeat) {
+    generateFilterStyle('effect-heat', 'brightness(0.6)');
+  } else if (evt.target === uploadEffectNone) {
+    generateFilterStyle('effect-none', 'none');
+    uploadEffectLevel.classList.add('hidden');
+  } else if (evt.target === uploadResizeControlsDec) {
+    if (uploadResizeValue > RESIZE_MIN && uploadResizeValue <= RESIZE_MAX) {
+      uploadResizeValue = uploadResizeValue - STEP;
+      effectImage.style = 'transform: scale(' + uploadResizeValue / RESIZE_DEFAULT + ')';
+    } else {
+      uploadResizeValue = RESIZE_DEFAULT;
+      effectImage.style = 'transform: scale(' + uploadResizeValue / RESIZE_DEFAULT + ')';
+    }
+    uploadResizeControlsValue.setAttribute('value', uploadResizeValue + '%');
+  } else if (evt.target === uploadResizeControlsInc) {
+    if (uploadResizeValue >= RESIZE_MIN && uploadResizeValue < RESIZE_MAX) {
+      uploadResizeValue = +uploadResizeValue + STEP;
+      effectImage.style = 'transform: scale(' + uploadResizeValue / RESIZE_DEFAULT + ')';
+    } else {
+      uploadResizeValue = RESIZE_DEFAULT;
+      effectImage.style = 'transform: scale(' + uploadResizeValue / RESIZE_DEFAULT + ')';
+    }
+    uploadResizeControlsValue.setAttribute('value', uploadResizeValue + '%');
+  }
+};
+
+/**
+ * Функция устанавливающая настройки поумолчанию
+ */
 var setDefaultParameter = function () {
-  uploadFile.value = ''; // сбрасывать значение поля выбора файла #upload-file?????
+  uploadFile.value = ''; // сбрасывает значение поля выбора файла #upload-file
   uploadResizeValue = RESIZE_DEFAULT;
   generateFilterStyle('effect-none', 'none');
   uploadEffectLevel.classList.add('hidden');
@@ -176,20 +199,25 @@ var setDefaultParameter = function () {
 
 var uploadFormClose = document.querySelector('#upload-cancel');
 
-uploadFormClose.addEventListener('click', function () {
+/**
+ * Функция закрытия формы
+ */
+var closeUploadForm = function () {
   uploadForm.classList.add('hidden');
 
   setDefaultParameter();
-  // removeEffectListener();
+
+  uploadForm.removeEventListener('click', generateFormParameters);
+};
+
+uploadFormClose.addEventListener('click', function () {
+  closeUploadForm();
 });
 
 document.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ESC_KEYCODE) {
-    uploadForm.classList.add('hidden');
-
-    setDefaultParameter();
+    closeUploadForm();
   }
-//  removeEffectListener();
 });
 
 /**
@@ -227,50 +255,22 @@ document.querySelector('.pictures').addEventListener('click', function (evt) {
 var galleryOverlayClose = document.querySelector('.gallery-overlay-close');
 var userDialog = document.querySelector('.gallery-overlay');
 
-galleryOverlayClose.addEventListener('click', function () {
+var closeGalleryOverlay = function () {
   userDialog.classList.add('hidden');
+};
+
+galleryOverlayClose.addEventListener('click', function () {
+  closeGalleryOverlay();
 });
 
 document.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ESC_KEYCODE) {
-    userDialog.classList.add('hidden');
+    closeGalleryOverlay();
   }
 });
 
 document.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ENTER_KEYCODE) {
-    userDialog.classList.add('hidden');
+    closeGalleryOverlay();
   }
-});
-
-/**
- ****** Редактирование размера изображения
- */
-var uploadResizeControlsDec = document.querySelector('.upload-resize-controls-button-dec');
-var uploadResizeControlsInc = document.querySelector('.upload-resize-controls-button-inc');
-var uploadResizeControlsValue = document.querySelector('.upload-resize-controls-value');
-
-var uploadResizeValue = RESIZE_DEFAULT;
-
-uploadResizeControlsDec.addEventListener('click', function () {
-  if (uploadResizeValue > RESIZE_MIN && uploadResizeValue <= RESIZE_MAX) {
-    uploadResizeValue = uploadResizeValue - STEP;
-    effectImage.style = 'transform: scale(' + uploadResizeValue / RESIZE_DEFAULT + ')';
-  } else {
-    uploadResizeValue = RESIZE_DEFAULT;
-    effectImage.style = 'transform: scale(' + uploadResizeValue / RESIZE_DEFAULT + ')';
-  }
-  uploadResizeControlsValue.setAttribute('value', uploadResizeValue + '%');
-});
-
-uploadResizeControlsInc.addEventListener('click', function () {
-  if (uploadResizeValue >= RESIZE_MIN && uploadResizeValue < RESIZE_MAX) {
-    uploadResizeValue = +uploadResizeValue + STEP;
-    effectImage.style = 'transform: scale(' + uploadResizeValue / RESIZE_DEFAULT + ')';
-
-  } else {
-    uploadResizeValue = RESIZE_DEFAULT;
-    effectImage.style = 'transform: scale(' + uploadResizeValue / RESIZE_DEFAULT + ')';
-  }
-  uploadResizeControlsValue.setAttribute('value', uploadResizeValue + '%');
 });
