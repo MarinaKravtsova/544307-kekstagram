@@ -19,6 +19,8 @@ var STEP = 25;
 var RESIZE_MAX = 100;
 var RESIZE_MIN = 25;
 var RESIZE_DEFAULT = 100;
+var HASHTAG_MAX = 5;
+var HASHTAG_MAX_LONG = 20;
 
 /**
  * Фцнкция генерирущая случайное число от max до min
@@ -48,7 +50,7 @@ var generatePhotoObject = function () {
   }
 
   var photo = {
-    url: 'photos/' + i + '.jpg',
+    url: 'photos/' + (i + 1) + '.jpg',
     likes: getRandomNumber(LIKE_MAX, LIKE_MIN),
     comments: commentsArray
   };
@@ -57,8 +59,8 @@ var generatePhotoObject = function () {
 
 var photos = [];// Массив с фотографиями 1-25
 
-for (var i = 1; i <= PHOTO_NUMBERS; i++) {
-  photos[i - 1] = generatePhotoObject();
+for (var i = 0; i < PHOTO_NUMBERS; i++) {
+  photos[i] = generatePhotoObject();
 }
 
 var pictureTemplate = document.querySelector('#picture-template').content;
@@ -76,7 +78,7 @@ var generateDomElement = function (photoObject) {
   pictureElement.querySelector('.picture-comments').textContent = photoObject.comments.length;
 
   pictureElement.querySelector('a').setAttribute('href', '#');
-  pictureElement.querySelector('IMG').setAttribute('id', y);
+  pictureElement.querySelector('img').setAttribute('id', y);
 
   return pictureElement;
 };
@@ -113,13 +115,17 @@ var uploadForm = document.querySelector('.upload-overlay');
 
 /**
  * Функция генерирущая стили фильтров
- * @param  {type} filterType параметр функции описываюший класс используемого фильтра
- * @param  {type} filter     параметр функции описываюший используемый фильтр
  */
 var generateFilterStyle = function () {
-  uploadEffectLevel.classList.remove('hidden');
   effectImage.setAttribute('class', 'effect-image-preview' + ' ' + filterType);
   effectImage.style = 'filter:' + filter + '; transform: scale(' + uploadResizeValue / RESIZE_DEFAULT + ')';
+};
+
+/**
+ * Функция добавляющая ползунок
+ */
+var addEffectLevelLin = function () {
+  uploadEffectLevel.classList.remove('hidden');
 };
 
 uploadFile.addEventListener('change', function () {
@@ -128,11 +134,10 @@ uploadFile.addEventListener('change', function () {
   uploadForm.addEventListener('click', generateFormParameters);
 
   uploadEffectNone.addEventListener('click', function () {
+    uploadEffectLevel.classList.add('hidden');
     filterType = 'effect-none';
     filter = 'none';
     generateFilterStyle();
-
-    uploadEffectLevel.classList.add('hidden');
   });
 
   uploadResizeControlsValue.setAttribute('value', RESIZE_DEFAULT + '%');
@@ -151,6 +156,7 @@ var uploadResizeValue = RESIZE_DEFAULT;
 
 var filterType = 'none';
 var filter = 'none';
+
 /**
  * Функция генерирущая параментры формы для загружаемой фотографии
  * @param  {type} evt
@@ -159,47 +165,43 @@ var generateFormParameters = function (evt) {
   if (evt.target === uploadEffectChrome) {
     filterType = 'effect-chrome';
     filter = 'grayscale(0.2)';
-    generateFilterStyle();
+    addEffectLevelLin();
   } else if (evt.target === uploadEffectSepia) {
     filterType = 'effect-sepia';
     filter = 'sepia(0.2)';
-    generateFilterStyle();
+    addEffectLevelLin();
   } else if (evt.target === uploadEffectMarvin) {
     filterType = 'effect-marvin';
     filter = 'invert(20%)';
-    generateFilterStyle();
+    addEffectLevelLin();
   } else if (evt.target === uploadEffectPhobos) {
     filterType = 'effect-phobos';
     filter = 'blur(0.6px)';
-    generateFilterStyle();
+    addEffectLevelLin();
   } else if (evt.target === uploadEffectHeat) {
     filterType = 'effect-heat';
     filter = 'brightness(0.6)';
-    generateFilterStyle();
+    addEffectLevelLin();
   } else if (evt.target === uploadEffectNone) {
     filterType = 'effect-none';
     filter = 'none';
-    generateFilterStyle();
     uploadEffectLevel.classList.add('hidden');
   } else if (evt.target === uploadResizeControlsDec) {
     if (uploadResizeValue > RESIZE_MIN && uploadResizeValue <= RESIZE_MAX) {
       uploadResizeValue = uploadResizeValue - STEP;
-      generateFilterStyle();
     } else {
       uploadResizeValue = RESIZE_DEFAULT;
-      generateFilterStyle();
     }
     uploadResizeControlsValue.setAttribute('value', uploadResizeValue + '%');
   } else if (evt.target === uploadResizeControlsInc) {
     if (uploadResizeValue >= RESIZE_MIN && uploadResizeValue < RESIZE_MAX) {
       uploadResizeValue = +uploadResizeValue + STEP;
-      generateFilterStyle();
     } else {
       uploadResizeValue = RESIZE_DEFAULT;
-      generateFilterStyle();
     }
     uploadResizeControlsValue.setAttribute('value', uploadResizeValue + '%');
   }
+  generateFilterStyle();
 };
 
 /**
@@ -260,8 +262,8 @@ uploadEffectPin.addEventListener('mouseup', function () {
 });
 
 /**
- * ***обработчик событий, который вызывает показ оверлея с
- * ***соответствующими данными / открытие и закрытие его
+ * *******обработчик событий, который вызывает показ оверлея с
+ * *******соответствующими данными / открытие и закрытие его
  */
 document.querySelector('.pictures').addEventListener('click', function (evt) {
   if (evt.target.tagName === 'IMG') {
@@ -291,4 +293,73 @@ document.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ENTER_KEYCODE) {
     closeGalleryOverlay();
   }
+});
+
+/**
+ * *********2.3. Хэш-теги:
+ */
+var uploadFormHashtags = document.querySelector('.upload-form-hashtags');
+
+uploadFormHashtags.addEventListener('input', function () {
+  uploadFormHashtags.setCustomValidity('');
+  var hashtagArr = uploadFormHashtags.value;
+  var hashtagArrSplit = hashtagArr.split('#');
+  hashtagArrSplit.splice(0, 1);
+  var hashtag = hashtagArr.split('');
+
+  for (var x = 0; x < hashtagArrSplit.length; x++) {
+    if (hashtagArrSplit[x].length > HASHTAG_MAX_LONG) {
+      uploadFormHashtags.setCustomValidity('Хэш-тег не должно превышать 20-ти символов');
+    }
+
+    for (var b = x + 1; b < hashtagArrSplit.length; b++) {
+      if (hashtagArrSplit[x].toUpperCase().slice(0, -1) === hashtagArrSplit[b].toUpperCase() || hashtagArrSplit[x].toUpperCase().slice(0, -1) === hashtagArrSplit[b].toUpperCase().slice(0, -1)) {
+        uploadFormHashtags.setCustomValidity('Хэш-теги не должны повторяться');
+      }
+    }
+
+    var hashtagArrSign = hashtagArrSplit[x].split('');
+
+    if (x < hashtagArrSplit.length - 1) {
+      if (hashtagArrSign[hashtagArrSign.length - 1] !== ' ') {
+        uploadFormHashtags.setCustomValidity('Хэш-теги должны разделяться пробелами');
+      }
+    }
+
+    if (hashtag[0] !== '#') {
+      uploadFormHashtags.setCustomValidity('Хэш-теги должны начинаться с символа # (решётка)');
+    }
+
+    for (var c = 0; c < hashtagArrSign.length - 1; c++) {
+      if (hashtagArrSign[c] === ' ') {
+        uploadFormHashtags.setCustomValidity('Хэш-тег должен состоять из одного слова');
+      }
+    }
+  }
+
+  if (hashtagArrSplit.length > HASHTAG_MAX) {
+    uploadFormHashtags.setCustomValidity('Нельзя указывать больше пяти хэш-тегов');
+  }
+});
+
+
+/**
+ * ************2.4. Комментарии
+ */
+var uploadFormDescription = document.querySelector('.upload-form-description');
+
+uploadFormDescription.addEventListener('focus', function () {
+  document.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      uploadForm.classList.remove('hidden');
+    }
+  });
+});
+
+uploadFormDescription.addEventListener('blur', function () {
+  document.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      uploadForm.classList.add('hidden');
+    }
+  });
 });
