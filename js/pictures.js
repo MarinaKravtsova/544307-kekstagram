@@ -116,7 +116,7 @@ var uploadForm = document.querySelector('.upload-overlay');
  * @param  {type} filterType параметр функции описываюший класс используемого фильтра
  * @param  {type} filter     параметр функции описываюший используемый фильтр
  */
-var generateFilterStyle = function (filterType, filter) {
+var generateFilterStyle = function () {
   uploadEffectLevel.classList.remove('hidden');
   effectImage.setAttribute('class', 'effect-image-preview' + ' ' + filterType);
   effectImage.style = 'filter:' + filter + '; transform: scale(' + uploadResizeValue / RESIZE_DEFAULT + ')';
@@ -128,7 +128,9 @@ uploadFile.addEventListener('change', function () {
   uploadForm.addEventListener('click', generateFormParameters);
 
   uploadEffectNone.addEventListener('click', function () {
-    generateFilterStyle('effect-none', 'none');
+    filterType = 'effect-none';
+    filter = 'none';
+    generateFilterStyle();
 
     uploadEffectLevel.classList.add('hidden');
   });
@@ -147,40 +149,54 @@ var uploadResizeControlsValue = document.querySelector('.upload-resize-controls-
 
 var uploadResizeValue = RESIZE_DEFAULT;
 
+var filterType = 'none';
+var filter = 'none';
 /**
  * Функция генерирущая параментры формы для загружаемой фотографии
  * @param  {type} evt
  */
 var generateFormParameters = function (evt) {
   if (evt.target === uploadEffectChrome) {
-    generateFilterStyle('effect-chrome', 'grayscale(0.2)');
+    filterType = 'effect-chrome';
+    filter = 'grayscale(0.2)';
+    generateFilterStyle();
   } else if (evt.target === uploadEffectSepia) {
-    generateFilterStyle('effect-sepia', 'sepia(0.2)');
+    filterType = 'effect-sepia';
+    filter = 'sepia(0.2)';
+    generateFilterStyle();
   } else if (evt.target === uploadEffectMarvin) {
-    generateFilterStyle('effect-marvin', 'invert(20%)');
+    filterType = 'effect-marvin';
+    filter = 'invert(20%)';
+    generateFilterStyle();
   } else if (evt.target === uploadEffectPhobos) {
-    generateFilterStyle('effect-phobos', 'blur(0.6px)');
+    filterType = 'effect-phobos';
+    filter = 'blur(0.6px)';
+    generateFilterStyle();
   } else if (evt.target === uploadEffectHeat) {
-    generateFilterStyle('effect-heat', 'brightness(0.6)');
+    filterType = 'effect-heat';
+    filter = 'brightness(0.6)';
+    generateFilterStyle();
   } else if (evt.target === uploadEffectNone) {
-    generateFilterStyle('effect-none', 'none');
+    filterType = 'effect-none';
+    filter = 'none';
+    generateFilterStyle();
     uploadEffectLevel.classList.add('hidden');
   } else if (evt.target === uploadResizeControlsDec) {
     if (uploadResizeValue > RESIZE_MIN && uploadResizeValue <= RESIZE_MAX) {
       uploadResizeValue = uploadResizeValue - STEP;
-      effectImage.style = 'transform: scale(' + uploadResizeValue / RESIZE_DEFAULT + ')';
+      generateFilterStyle();
     } else {
       uploadResizeValue = RESIZE_DEFAULT;
-      effectImage.style = 'transform: scale(' + uploadResizeValue / RESIZE_DEFAULT + ')';
+      generateFilterStyle();
     }
     uploadResizeControlsValue.setAttribute('value', uploadResizeValue + '%');
   } else if (evt.target === uploadResizeControlsInc) {
     if (uploadResizeValue >= RESIZE_MIN && uploadResizeValue < RESIZE_MAX) {
       uploadResizeValue = +uploadResizeValue + STEP;
-      effectImage.style = 'transform: scale(' + uploadResizeValue / RESIZE_DEFAULT + ')';
+      generateFilterStyle();
     } else {
       uploadResizeValue = RESIZE_DEFAULT;
-      effectImage.style = 'transform: scale(' + uploadResizeValue / RESIZE_DEFAULT + ')';
+      generateFilterStyle();
     }
     uploadResizeControlsValue.setAttribute('value', uploadResizeValue + '%');
   }
@@ -192,7 +208,9 @@ var generateFormParameters = function (evt) {
 var setDefaultParameter = function () {
   uploadFile.value = ''; // сбрасывает значение поля выбора файла #upload-file
   uploadResizeValue = RESIZE_DEFAULT;
-  generateFilterStyle('effect-none', 'none');
+  filterType = 'effect-none';
+  filter = 'none';
+  generateFilterStyle();
   uploadEffectLevel.classList.add('hidden');
   document.querySelector('#upload-effect-none').checked = true;
 };
