@@ -140,6 +140,8 @@ var uploadEffectPin = document.querySelector('.upload-effect-level-pin');
 var effectImage;
 var uploadEffectNone = document.querySelector('#upload-effect-none');
 var uploadEffectLevel = document.querySelector('.upload-effect-level');
+var uploadResizeControls = document.querySelector('.upload-resize-controls');
+var uploadEffectControls = document.querySelector('.upload-effect-controls');
 
 /**
  * Функция добавляющая ползунок
@@ -152,7 +154,8 @@ uploadFile.addEventListener('change', function () {
   uploadForm.classList.remove('hidden');
   effectImage = document.querySelector('.effect-image-preview');
 
-  uploadForm.addEventListener('click', generateFormParameters);
+  uploadResizeControls.addEventListener('click', resizeClickHandler);
+  uploadEffectControls.addEventListener('click', filterClickHandler);
 
   uploadEffectNone.addEventListener('click', function () {
     uploadEffectLevel.classList.add('hidden');
@@ -207,30 +210,29 @@ var filterClickHandler = function (evt) {
  */
 var resizeClickHandler = function (evt) {
   if (evt.target === uploadResizeControlsDec) {
-    if (uploadResizeValue > RESIZE_MIN && uploadResizeValue <= RESIZE_MAX) {
-      uploadResizeValue = uploadResizeValue - STEP;
-    } else {
-      uploadResizeValue = RESIZE_DEFAULT;
-    }
-    uploadResizeControlsValue.setAttribute('value', uploadResizeValue + '%');
+    resizeControlsDec();
   } else if (evt.target === uploadResizeControlsInc) {
-    if (uploadResizeValue >= RESIZE_MIN && uploadResizeValue < RESIZE_MAX) {
-      uploadResizeValue = +uploadResizeValue + STEP;
-    } else {
-      uploadResizeValue = RESIZE_DEFAULT;
-    }
-    uploadResizeControlsValue.setAttribute('value', uploadResizeValue + '%');
+    resizeControlsInc();
   }
   effectImage.style.transform = 'scale(' + uploadResizeValue / RESIZE_DEFAULT + ')';
 };
 
-/**
- * Функция генерирующая параметры формы (фильтры и размеры)
- * @param  {type} evt
- */
-var generateFormParameters = function (evt) {
-  resizeClickHandler(evt);
-  filterClickHandler(evt);
+var resizeControlsDec = function () {
+  if (uploadResizeValue > RESIZE_MIN && uploadResizeValue <= RESIZE_MAX) {
+    uploadResizeValue = uploadResizeValue - STEP;
+  } else {
+    uploadResizeValue = RESIZE_DEFAULT;
+  }
+  uploadResizeControlsValue.setAttribute('value', uploadResizeValue + '%');
+};
+
+var resizeControlsInc = function () {
+  if (uploadResizeValue >= RESIZE_MIN && uploadResizeValue < RESIZE_MAX) {
+    uploadResizeValue = +uploadResizeValue + STEP;
+  } else {
+    uploadResizeValue = RESIZE_DEFAULT;
+  }
+  uploadResizeControlsValue.setAttribute('value', uploadResizeValue + '%');
 };
 
 /**
@@ -254,7 +256,8 @@ var closeUploadForm = function () {
 
   setDefaultParameter();
 
-  uploadForm.removeEventListener('click', generateFormParameters);
+  uploadResizeControls.removeEventListener('click', resizeClickHandler);
+  uploadEffectControls.removeEventListener('click', filterClickHandler);
 };
 
 uploadFormClose.addEventListener('click', function () {
