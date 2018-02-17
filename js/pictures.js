@@ -19,9 +19,31 @@ var STEP = 25;
 var RESIZE_MAX = 100;
 var RESIZE_MIN = 25;
 var RESIZE_DEFAULT = 100;
+var HASHTAG_MAX = 5;
+var HASHTAG_MAX_LONG = 20;
+var FILTERS = {
+  'effect-none': function () {
+    return '';
+  },
+  'effect-chrome': function (value) {
+    return 'grayscale(' + value * 0.01 + ')';
+  },
+  'effect-sepia': function (value) {
+    return 'sepia(' + value * 0.01 + ')';
+  },
+  'effect-marvin': function (value) {
+    return 'invert(' + value + '%' + ')';
+  },
+  'effect-phobos': function (value) {
+    return 'blur(' + value * 0.03 + 'px' + ')';
+  },
+  'effect-heat': function (value) {
+    return 'brightness(' + value * 0.03 + ')';
+  }
+};
 
 /**
- * Фцнкция генерирущая случайное число от max до min
+ * Фцнкция генерирующая случайное число от max до min
  * @param {number} max Максимальное число
  * @param {number} min Минимальное число
  * @return {number}
@@ -48,7 +70,7 @@ var generatePhotoObject = function () {
   }
 
   var photo = {
-    url: 'photos/' + i + '.jpg',
+    url: 'photos/' + (i + 1) + '.jpg',
     likes: getRandomNumber(LIKE_MAX, LIKE_MIN),
     comments: commentsArray
   };
@@ -57,8 +79,8 @@ var generatePhotoObject = function () {
 
 var photos = [];// Массив с фотографиями 1-25
 
-for (var i = 1; i <= PHOTO_NUMBERS; i++) {
-  photos[i - 1] = generatePhotoObject();
+for (var i = 0; i < PHOTO_NUMBERS; i++) {
+  photos[i] = generatePhotoObject();
 }
 
 var pictureTemplate = document.querySelector('#picture-template').content;
@@ -76,7 +98,7 @@ var generateDomElement = function (photoObject) {
   pictureElement.querySelector('.picture-comments').textContent = photoObject.comments.length;
 
   pictureElement.querySelector('a').setAttribute('href', '#');
-  pictureElement.querySelector('IMG').setAttribute('id', y);
+  pictureElement.querySelector('img').setAttribute('data-id', y);
 
   return pictureElement;
 };
@@ -112,27 +134,33 @@ var uploadFile = document.querySelector('#upload-file');
 var uploadForm = document.querySelector('.upload-overlay');
 
 /**
- * Функция генерирущая стили фильтров
- * @param  {type} filterType параметр функции описываюший класс используемого фильтра
- * @param  {type} filter     параметр функции описываюший используемый фильтр
+ ********** Применение эффекта для изображения
  */
-var generateFilterStyle = function () {
+var uploadEffectPin = document.querySelector('.upload-effect-level-pin');
+var effectImage;
+var uploadEffectNone = document.querySelector('#upload-effect-none');
+var uploadEffectLevel = document.querySelector('.upload-effect-level');
+var uploadResizeControls = document.querySelector('.upload-resize-controls');
+var uploadEffectControls = document.querySelector('.upload-effect-controls');
+
+/**
+ * Функция добавляющая ползунок
+ */
+var addEffectLevelLine = function () {
   uploadEffectLevel.classList.remove('hidden');
-  effectImage.setAttribute('class', 'effect-image-preview' + ' ' + filterType);
-  effectImage.style = 'filter:' + filter + '; transform: scale(' + uploadResizeValue / RESIZE_DEFAULT + ')';
 };
 
 uploadFile.addEventListener('change', function () {
   uploadForm.classList.remove('hidden');
+  effectImage = document.querySelector('.effect-image-preview');
 
-  uploadForm.addEventListener('click', generateFormParameters);
+  uploadResizeControls.addEventListener('click', resizeClickHandler);
+  uploadEffectControls.addEventListener('click', filterClickHandler);
 
   uploadEffectNone.addEventListener('click', function () {
-    filterType = 'effect-none';
-    filter = 'none';
-    generateFilterStyle();
-
     uploadEffectLevel.classList.add('hidden');
+
+    applyFilter('effect-none', '', effectImage);
   });
 
   uploadResizeControlsValue.setAttribute('value', RESIZE_DEFAULT + '%');
@@ -149,57 +177,62 @@ var uploadResizeControlsValue = document.querySelector('.upload-resize-controls-
 
 var uploadResizeValue = RESIZE_DEFAULT;
 
-var filterType = 'none';
-var filter = 'none';
 /**
- * Функция генерирущая параментры формы для загружаемой фотографии
+ * Функция применяющая к изображению фильтр и размер
+ *
+ * @param  {type} name    название применяемого фильтра
+ * @param  {type} value   величина применяемого фильтра
+ * @param  {type} element загружаемая фотография
+ */
+var applyFilter = function (name, value, element) {
+  element.style.filter = FILTERS[name](value);
+  effectImage.style.transform = 'scale(' + uploadResizeValue / RESIZE_DEFAULT + ')';
+  effectImage.setAttribute('class', 'effect-image-preview' + ' ' + name);
+};
+
+/**
+ * Функция обрабатывающая клики на фильтры
  * @param  {type} evt
  */
-var generateFormParameters = function (evt) {
-  if (evt.target === uploadEffectChrome) {
-    filterType = 'effect-chrome';
-    filter = 'grayscale(0.2)';
-    generateFilterStyle();
-  } else if (evt.target === uploadEffectSepia) {
-    filterType = 'effect-sepia';
-    filter = 'sepia(0.2)';
-    generateFilterStyle();
-  } else if (evt.target === uploadEffectMarvin) {
-    filterType = 'effect-marvin';
-    filter = 'invert(20%)';
-    generateFilterStyle();
-  } else if (evt.target === uploadEffectPhobos) {
-    filterType = 'effect-phobos';
-    filter = 'blur(0.6px)';
-    generateFilterStyle();
-  } else if (evt.target === uploadEffectHeat) {
-    filterType = 'effect-heat';
-    filter = 'brightness(0.6)';
-    generateFilterStyle();
-  } else if (evt.target === uploadEffectNone) {
-    filterType = 'effect-none';
-    filter = 'none';
-    generateFilterStyle();
+var filterClickHandler = function (evt) {
+  var filterName = 'effect-' + evt.target.value;
+  applyFilter(filterName, 20, effectImage);
+  addEffectLevelLine();
+
+  if (evt.target.value === 'none') {
     uploadEffectLevel.classList.add('hidden');
-  } else if (evt.target === uploadResizeControlsDec) {
-    if (uploadResizeValue > RESIZE_MIN && uploadResizeValue <= RESIZE_MAX) {
-      uploadResizeValue = uploadResizeValue - STEP;
-      generateFilterStyle();
-    } else {
-      uploadResizeValue = RESIZE_DEFAULT;
-      generateFilterStyle();
-    }
-    uploadResizeControlsValue.setAttribute('value', uploadResizeValue + '%');
-  } else if (evt.target === uploadResizeControlsInc) {
-    if (uploadResizeValue >= RESIZE_MIN && uploadResizeValue < RESIZE_MAX) {
-      uploadResizeValue = +uploadResizeValue + STEP;
-      generateFilterStyle();
-    } else {
-      uploadResizeValue = RESIZE_DEFAULT;
-      generateFilterStyle();
-    }
-    uploadResizeControlsValue.setAttribute('value', uploadResizeValue + '%');
   }
+};
+
+/**
+ * Функция обрабатывающая клики на регулировщики размера
+ * @param  {type} evt
+ */
+var resizeClickHandler = function (evt) {
+  if (evt.target === uploadResizeControlsDec) {
+    resizeControlsDec();
+  } else if (evt.target === uploadResizeControlsInc) {
+    resizeControlsInc();
+  }
+  effectImage.style.transform = 'scale(' + uploadResizeValue / RESIZE_DEFAULT + ')';
+};
+
+var resizeControlsDec = function () {
+  if (uploadResizeValue > RESIZE_MIN && uploadResizeValue <= RESIZE_MAX) {
+    uploadResizeValue = uploadResizeValue - STEP;
+  } else {
+    uploadResizeValue = RESIZE_DEFAULT;
+  }
+  uploadResizeControlsValue.setAttribute('value', uploadResizeValue + '%');
+};
+
+var resizeControlsInc = function () {
+  if (uploadResizeValue >= RESIZE_MIN && uploadResizeValue < RESIZE_MAX) {
+    uploadResizeValue = +uploadResizeValue + STEP;
+  } else {
+    uploadResizeValue = RESIZE_DEFAULT;
+  }
+  uploadResizeControlsValue.setAttribute('value', uploadResizeValue + '%');
 };
 
 /**
@@ -208,9 +241,7 @@ var generateFormParameters = function (evt) {
 var setDefaultParameter = function () {
   uploadFile.value = ''; // сбрасывает значение поля выбора файла #upload-file
   uploadResizeValue = RESIZE_DEFAULT;
-  filterType = 'effect-none';
-  filter = 'none';
-  generateFilterStyle();
+  applyFilter('effect-none', '', effectImage);
   uploadEffectLevel.classList.add('hidden');
   document.querySelector('#upload-effect-none').checked = true;
 };
@@ -225,7 +256,8 @@ var closeUploadForm = function () {
 
   setDefaultParameter();
 
-  uploadForm.removeEventListener('click', generateFormParameters);
+  uploadResizeControls.removeEventListener('click', resizeClickHandler);
+  uploadEffectControls.removeEventListener('click', filterClickHandler);
 };
 
 uploadFormClose.addEventListener('click', function () {
@@ -238,34 +270,17 @@ document.addEventListener('keydown', function (evt) {
   }
 });
 
-/**
- ********** Применение эффекта для изображения
- */
-var uploadEffectPin = document.querySelector('.upload-effect-level-pin');
-var effectImage = document.querySelector('.effect-image-preview');
-var uploadEffectNone = document.querySelector('#upload-effect-none');
-var uploadEffectChrome = document.querySelector('#upload-effect-chrome');
-var uploadEffectSepia = document.querySelector('#upload-effect-sepia');
-var uploadEffectMarvin = document.querySelector('#upload-effect-marvin');
-var uploadEffectPhobos = document.querySelector('#upload-effect-phobos');
-var uploadEffectHeat = document.querySelector('#upload-effect-heat');
-var uploadEffectLevel = document.querySelector('.upload-effect-level');
-
 uploadEffectPin.addEventListener('mouseup', function () {
-  effectImage.style = 'filter: grayscale(0.2)';
-  effectImage.style = 'filter: sepia(0.2)';
-  effectImage.style = 'filter: invert(20%)';
-  effectImage.style = 'filter: blur(0.6px)';
-  effectImage.style = 'filter: brightness(0.6)';
+
 });
 
 /**
- * ***обработчик событий, который вызывает показ оверлея с
- * ***соответствующими данными / открытие и закрытие его
+ * *******обработчик событий, который вызывает показ оверлея с
+ * *******соответствующими данными / открытие и закрытие его
  */
 document.querySelector('.pictures').addEventListener('click', function (evt) {
   if (evt.target.tagName === 'IMG') {
-    var id = evt.target.id;
+    var id = evt.target.getAttribute('data-id');
     generateFullScreenPhoto(id);
   }
 });
@@ -291,4 +306,92 @@ document.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ENTER_KEYCODE) {
     closeGalleryOverlay();
   }
+});
+
+/**
+ * *********2.3. Хэш-теги:
+ */
+var uploadFormHashtags = document.querySelector('.upload-form-hashtags');
+var error = false;
+var uploadFormSubmit = document.querySelector('.upload-form-submit');
+
+uploadFormSubmit.addEventListener('click', function () {
+  if (error === true) {
+    uploadFormHashtags.setAttribute('style', 'border' + ':' + '3px solid red');
+  }
+});
+
+/**
+ * Функция генерирующая сообщение, которое указывает на несоответствие ограничениям
+ *  и выделяет поле с ошибкой
+ * @param  {type} notice сообщение, указывающее на несоответствие ограничениям
+ */
+var setNotice = function (notice) {
+  uploadFormHashtags.setCustomValidity(notice);
+  error = true;
+};
+
+uploadFormHashtags.addEventListener('input', function () {
+  uploadFormHashtags.setCustomValidity('');
+  var hashtagArr = uploadFormHashtags.value;
+  var hashtagArrSplit = hashtagArr.split('#');
+  hashtagArrSplit.splice(0, 1);
+  var hashtag = hashtagArr.split('');
+
+  uploadFormHashtags.setAttribute('style', 'border' + ':' + 'none');
+
+  for (var x = 0; x < hashtagArrSplit.length; x++) {
+    if (hashtagArrSplit[x].length > HASHTAG_MAX_LONG) {
+      setNotice('Хэш-тег не должен превышать 20-ти символов');
+    }
+
+    for (var b = x + 1; b < hashtagArrSplit.length; b++) {
+      if (hashtagArrSplit[x].toUpperCase().slice(0, -1) === hashtagArrSplit[b].toUpperCase() || hashtagArrSplit[x].toUpperCase().slice(0, -1) === hashtagArrSplit[b].toUpperCase().slice(0, -1)) {
+        setNotice('Хэш-теги не должны повторяться');
+      }
+    }
+
+    var hashtagArrSign = hashtagArrSplit[x].split('');
+
+    if (x < hashtagArrSplit.length - 1) {
+      if (hashtagArrSign[hashtagArrSign.length - 1] !== ' ') {
+        setNotice('Хэш-теги должны разделяться пробелами');
+      }
+    }
+
+    for (var c = 0; c < hashtagArrSign.length - 1; c++) {
+      if (hashtagArrSign[c] === ' ') {
+        setNotice('Хэш-тег должен состоять из одного слова');
+      }
+    }
+  }
+
+  if (hashtagArrSplit.length > HASHTAG_MAX) {
+    setNotice('Нельзя указывать больше пяти хэш-тегов');
+  }
+
+  if (hashtag[0] !== '#') {
+    setNotice('Хэш-теги должны начинаться с символа # (решётка)');
+  }
+});
+
+/**
+ * ************2.4. Комментарии
+ */
+var uploadFormDescription = document.querySelector('.upload-form-description');
+
+uploadFormDescription.addEventListener('focus', function () {
+  document.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      uploadForm.classList.remove('hidden');
+    }
+  });
+});
+
+uploadFormDescription.addEventListener('blur', function () {
+  document.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      uploadForm.classList.add('hidden');
+    }
+  });
 });
