@@ -134,6 +134,14 @@ var uploadFile = document.querySelector('#upload-file');
 var uploadForm = document.querySelector('.upload-overlay');
 
 /**
+ ********** Применение эффекта для изображения
+ */
+var uploadEffectPin = document.querySelector('.upload-effect-level-pin');
+var effectImage;
+var uploadEffectNone = document.querySelector('#upload-effect-none');
+var uploadEffectLevel = document.querySelector('.upload-effect-level');
+
+/**
  * Функция добавляющая ползунок
  */
 var addEffectLevelLine = function () {
@@ -142,8 +150,7 @@ var addEffectLevelLine = function () {
 
 uploadFile.addEventListener('change', function () {
   uploadForm.classList.remove('hidden');
-  uploadResizeValue = RESIZE_DEFAULT;
-  applyFilter('effect-none', '', effectImage);
+  effectImage = document.querySelector('.effect-image-preview');
 
   uploadForm.addEventListener('click', generateFormParameters);
 
@@ -181,29 +188,25 @@ var applyFilter = function (name, value, element) {
 };
 
 /**
- * Функция генерирущая параментры формы для загружаемой фотографии
+ * Функция обрабатывающая клики на фильтры
  * @param  {type} evt
  */
-var generateFormParameters = function (evt) {
-  if (evt.target === uploadEffectChrome) {
-    applyFilter('effect-chrome', 20, effectImage);
-    addEffectLevelLine();
-  } else if (evt.target === uploadEffectSepia) {
-    applyFilter('effect-sepia', 20, effectImage);
-    addEffectLevelLine();
-  } else if (evt.target === uploadEffectMarvin) {
-    applyFilter('effect-marvin', 20, effectImage);
-    addEffectLevelLine();
-  } else if (evt.target === uploadEffectPhobos) {
-    applyFilter('effect-phobos', 20, effectImage);
-    addEffectLevelLine();
-  } else if (evt.target === uploadEffectHeat) {
-    applyFilter('effect-heat', 20, effectImage);
-    addEffectLevelLine();
-  } else if (evt.target === uploadEffectNone) {
-    applyFilter('effect-none', 20, effectImage);
+var filterClickHandler = function (evt) {
+  var filterName = 'effect-' + evt.target.value;
+  applyFilter(filterName, 20, effectImage);
+  addEffectLevelLine();
+
+  if (evt.target.value === 'none') {
     uploadEffectLevel.classList.add('hidden');
-  } else if (evt.target === uploadResizeControlsDec) {
+  }
+};
+
+/**
+ * Функция обрабатывающая клики на регулировщики размера
+ * @param  {type} evt
+ */
+var resizeClickHandler = function (evt) {
+  if (evt.target === uploadResizeControlsDec) {
     if (uploadResizeValue > RESIZE_MIN && uploadResizeValue <= RESIZE_MAX) {
       uploadResizeValue = uploadResizeValue - STEP;
     } else {
@@ -222,12 +225,21 @@ var generateFormParameters = function (evt) {
 };
 
 /**
+ * Функция генерирующая параметры формы (фильтры и размеры)
+ * @param  {type} evt
+ */
+var generateFormParameters = function (evt) {
+  resizeClickHandler(evt);
+  filterClickHandler(evt);
+};
+
+/**
  * Функция устанавливающая настройки поумолчанию
  */
 var setDefaultParameter = function () {
   uploadFile.value = ''; // сбрасывает значение поля выбора файла #upload-file
   uploadResizeValue = RESIZE_DEFAULT;
-  applyFilter('effect-none', 20, effectImage);
+  applyFilter('effect-none', '', effectImage);
   uploadEffectLevel.classList.add('hidden');
   document.querySelector('#upload-effect-none').checked = true;
 };
@@ -255,25 +267,8 @@ document.addEventListener('keydown', function (evt) {
   }
 });
 
-/**
- ********** Применение эффекта для изображения
- */
-var uploadEffectPin = document.querySelector('.upload-effect-level-pin');
-var effectImage = document.querySelector('.effect-image-preview');
-var uploadEffectNone = document.querySelector('#upload-effect-none');
-var uploadEffectChrome = document.querySelector('#upload-effect-chrome');
-var uploadEffectSepia = document.querySelector('#upload-effect-sepia');
-var uploadEffectMarvin = document.querySelector('#upload-effect-marvin');
-var uploadEffectPhobos = document.querySelector('#upload-effect-phobos');
-var uploadEffectHeat = document.querySelector('#upload-effect-heat');
-var uploadEffectLevel = document.querySelector('.upload-effect-level');
-
 uploadEffectPin.addEventListener('mouseup', function () {
-  effectImage.style = 'filter: grayscale(0.2)';
-  effectImage.style = 'filter: sepia(0.2)';
-  effectImage.style = 'filter: invert(20%)';
-  effectImage.style = 'filter: blur(0.6px)';
-  effectImage.style = 'filter: brightness(0.6)';
+
 });
 
 /**
