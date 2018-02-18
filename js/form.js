@@ -24,12 +24,13 @@ var FILTERS = {
     return 'brightness(' + value * 0.03 + ')';
   }
 };
+
 /**
  ******** Загрузка изображения и показ формы редактирования
  */
 (function () {
   var uploadFile = document.querySelector('#upload-file');
-  window.uploadForm = document.querySelector('.upload-overlay');
+  var uploadForm = document.querySelector('.upload-overlay');
 
   /**
    ********** Применение эффекта для изображения

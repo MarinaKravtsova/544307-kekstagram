@@ -42,5 +42,5 @@
     userDialog.querySelector('.gallery-overlay-image').setAttribute('src', photos[index].url);
     userDialog.querySelector('.likes-count').textContent = photos[index].likes;
     userDialog.querySelector('.comments-count').textContent = photos[index].comments.length;
-};
+  };
 })();
