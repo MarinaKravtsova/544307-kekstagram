@@ -3,13 +3,12 @@
 /**
  * Фцнкция генерирующая дом-элемент
  * @param  {type} photoObject объект
- * @param  {type} y
  * @return {type} pictureElement объект
  */
 (function () {
   var pictureTemplate = document.querySelector('#picture-template').content;
 
-  window.generateDomElement = function (photoObject, y) {
+  var generateDomElement = function (photoObject) {
     var pictureElement = pictureTemplate.cloneNode(true);
 
     pictureElement.querySelector('.picture img').setAttribute('src', photoObject.url);
@@ -21,4 +20,15 @@
 
     return pictureElement;
   };
+
+  /**
+ * ********Отрисовка сгенерированных дом-элементов
+ */
+  var picturesContainer = document.querySelector('.pictures');
+  var fragment = document.createDocumentFragment();
+
+  for (var y = 0; y < photos.length; y++) {
+    fragment.appendChild(generateDomElement(photos[y]));
+  }
+  picturesContainer.appendChild(fragment);
 })();
