@@ -39,8 +39,8 @@
     userDialog = document.querySelector('.gallery-overlay');
     userDialog.classList.remove('hidden');
 
-    userDialog.querySelector('.gallery-overlay-image').setAttribute('src', photos[index].url);
-    userDialog.querySelector('.likes-count').textContent = photos[index].likes;
-    userDialog.querySelector('.comments-count').textContent = photos[index].comments.length;
+    userDialog.querySelector('.gallery-overlay-image').setAttribute('src', window.photos[index].url);
+    userDialog.querySelector('.likes-count').textContent = window.photos[index].likes;
+    userDialog.querySelector('.comments-count').textContent = window.photos[index].comments.length;
   };
 })();
