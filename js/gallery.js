@@ -27,8 +27,8 @@
   var picturesContainer = document.querySelector('.pictures');
   var fragment = document.createDocumentFragment();
 
-  for (var y = 0; y < photos.length; y++) {
-    fragment.appendChild(generateDomElement(photos[y]));
+  for (var y = 0; y < window.photos.length; y++) {
+    fragment.appendChild(generateDomElement(window.photos[y]));
   }
   picturesContainer.appendChild(fragment);
 })();
