@@ -165,9 +165,9 @@ var FILTERS = {
 
   var uploadFormDescription = document.querySelector('.upload-form-description');
 
-  document.addEventListener('keydown', function () {
-    if (window.util.isEscEvent && uploadFormDescription !== document.activeElement) {
-      closeUploadForm();
+  document.addEventListener('keydown', function (evt) {
+    if (uploadFormDescription !== document.activeElement) {
+      window.util.isEscEvent(evt, closeUploadForm);
     }
   });
 
