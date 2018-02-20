@@ -1,13 +1,13 @@
 'use strict';
 
-/**
- * Фцнкция генерирующая дом-элемент
- * @param  {type} photoObject объект
- * @return {type} pictureElement объект
- */
 (function () {
   var pictureTemplate = document.querySelector('#picture-template').content;
 
+  /**
+   * Фцнкция генерирующая дом-элемент
+   * @param  {type} photoObject объект
+   * @return {type} pictureElement объект
+   */
   var generateDomElement = function (photoObject) {
     var pictureElement = pictureTemplate.cloneNode(true);
 
@@ -27,8 +27,8 @@
   var picturesContainer = document.querySelector('.pictures');
   var fragment = document.createDocumentFragment();
 
-  for (var y = 0; y < window.photos.length; y++) {
-    fragment.appendChild(generateDomElement(window.photos[y]));
+  for (var y = 0; y < window.data.photos.length; y++) {
+    fragment.appendChild(generateDomElement(window.data.photos[y]));
   }
   picturesContainer.appendChild(fragment);
 })();
