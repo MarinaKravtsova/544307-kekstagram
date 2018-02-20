@@ -1,11 +1,11 @@
 'use strict';
 
-var HASHTAG_MAX = 5;
-var HASHTAG_MAX_LONG = 20;
-/*
+(function () {
+  var HASHTAG_MAX = 5;
+  var HASHTAG_MAX_LONG = 20;
+  /*
  * *********2.3. Хэш-теги
  */
-(function () {
   var uploadFormHashtags = document.querySelector('.upload-form-hashtags');
   var error = false;
   var uploadFormSubmit = document.querySelector('.upload-form-submit');
