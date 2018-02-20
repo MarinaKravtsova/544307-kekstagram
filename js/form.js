@@ -25,6 +25,9 @@
       return 'brightness(' + value * 0.03 + ')';
     }
   };
+  var EFFECT_MAX = 100;
+  var EFFECT_MIN = 0;
+  var EFFECT_MAX_PX = 450;
 
   /**
  ******** Загрузка изображения и показ формы редактирования
@@ -35,9 +38,7 @@
   /**
    ********** Применение эффекта для изображения
    */
-  var uploadEffectPin = document.querySelector('.upload-effect-level-pin');
   var effectImage;
-  var uploadEffectNone = document.querySelector('#upload-effect-none');
   var uploadEffectLevel = document.querySelector('.upload-effect-level');
   var uploadResizeControls = document.querySelector('.upload-resize-controls');
   var uploadEffectControls = document.querySelector('.upload-effect-controls');
@@ -56,11 +57,7 @@
     uploadResizeControls.addEventListener('click', resizeClickHandler);
     uploadEffectControls.addEventListener('click', filterClickHandler);
 
-    uploadEffectNone.addEventListener('click', function () {
-      uploadEffectLevel.classList.add('hidden');
-
-      applyFilter('effect-none', '', effectImage);
-    });
+    applyFilter('effect-none', '', effectImage);
 
     uploadResizeControlsValue.setAttribute('value', RESIZE_DEFAULT + '%');
 
@@ -89,14 +86,24 @@
     effectImage.setAttribute('class', 'effect-image-preview' + ' ' + name);
   };
 
+  var filterName;
+  var previousPosition;
+
   /**
    * Функция обрабатывающая клики на фильтры
    * @param  {type} evt
    */
   var filterClickHandler = function (evt) {
-    var filterName = 'effect-' + evt.target.value;
-    applyFilter(filterName, 20, effectImage);
-    addEffectLevelLine();
+
+    if (evt.target !== uploadEffectLevel && evt.target !== uploadEffectLevelLine && evt.target !== uploadEffectPin && evt.target !== uploadEffectVal) {
+      previousPosition = 450;
+      uploadEffectPin.style.left = (EFFECT_MAX) + '%';
+      uploadEffectVal.style.width = (EFFECT_MAX) + '%';
+
+      filterName = 'effect-' + evt.target.value;
+      applyFilter(filterName, EFFECT_MAX, effectImage);
+      addEffectLevelLine();
+    }
 
     if (evt.target.value === 'none') {
       uploadEffectLevel.classList.add('hidden');
@@ -171,6 +178,47 @@
     }
   });
 
-  uploadEffectPin.addEventListener('mouseup', function () {
+  // ****************перемещение слайдера
+  var uploadEffectPin = document.querySelector('.upload-effect-level-pin');
+  var uploadEffectVal = document.querySelector('.upload-effect-level-val');
+  var uploadEffectLevelLine = document.querySelector('.upload-effect-level-line');
+
+  uploadEffectPin.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+
+    var shift = evt.clientX - previousPosition;
+
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+
+      var cordinateX = moveEvt.clientX - shift;
+      previousPosition = cordinateX;
+
+      cordinateX = Math.round((cordinateX * EFFECT_MAX) / EFFECT_MAX_PX);
+
+      if (cordinateX > EFFECT_MAX) {
+        cordinateX = EFFECT_MAX;
+      } else if (cordinateX < EFFECT_MIN) {
+        cordinateX = EFFECT_MIN;
+      }
+
+      uploadEffectPin.style.left = (cordinateX) + '%';
+
+      applyFilter(filterName, cordinateX, effectImage);
+
+      uploadEffectVal.style.width = (cordinateX) + '%';
+    };
+
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
   });
+
+
 })();
