@@ -1,34 +1,34 @@
 'use strict';
 
-var STEP = 25;
-var RESIZE_MAX = 100;
-var RESIZE_MIN = 25;
-var RESIZE_DEFAULT = 100;
-var FILTERS = {
-  'effect-none': function () {
-    return '';
-  },
-  'effect-chrome': function (value) {
-    return 'grayscale(' + value * 0.01 + ')';
-  },
-  'effect-sepia': function (value) {
-    return 'sepia(' + value * 0.01 + ')';
-  },
-  'effect-marvin': function (value) {
-    return 'invert(' + value + '%' + ')';
-  },
-  'effect-phobos': function (value) {
-    return 'blur(' + value * 0.03 + 'px' + ')';
-  },
-  'effect-heat': function (value) {
-    return 'brightness(' + value * 0.03 + ')';
-  }
-};
+(function () {
+  var STEP = 25;
+  var RESIZE_MAX = 100;
+  var RESIZE_MIN = 25;
+  var RESIZE_DEFAULT = 100;
+  var FILTERS = {
+    'effect-none': function () {
+      return '';
+    },
+    'effect-chrome': function (value) {
+      return 'grayscale(' + value * 0.01 + ')';
+    },
+    'effect-sepia': function (value) {
+      return 'sepia(' + value * 0.01 + ')';
+    },
+    'effect-marvin': function (value) {
+      return 'invert(' + value + '%' + ')';
+    },
+    'effect-phobos': function (value) {
+      return 'blur(' + value * 0.03 + 'px' + ')';
+    },
+    'effect-heat': function (value) {
+      return 'brightness(' + value * 0.03 + ')';
+    }
+  };
 
-/**
+  /**
  ******** Загрузка изображения и показ формы редактирования
  */
-(function () {
   var uploadFile = document.querySelector('#upload-file');
   var uploadForm = document.querySelector('.upload-overlay');
 
@@ -172,6 +172,5 @@ var FILTERS = {
   });
 
   uploadEffectPin.addEventListener('mouseup', function () {
-
   });
 })();
