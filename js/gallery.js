@@ -6,9 +6,10 @@
   /**
    * Фцнкция генерирующая дом-элемент
    * @param  {type} photoObject объект
+   * @param  {type} y порядковый номер объекта
    * @return {type} pictureElement объект
    */
-  var generateDomElement = function (photoObject) {
+  var generateDomElement = function (photoObject, y) {
     var pictureElement = pictureTemplate.cloneNode(true);
 
     pictureElement.querySelector('.picture img').setAttribute('src', photoObject.url);
@@ -22,13 +23,19 @@
   };
 
   /**
- * ********Отрисовка сгенерированных дом-элементов
- */
-  var picturesContainer = document.querySelector('.pictures');
-  var fragment = document.createDocumentFragment();
+   * Функция отрисовывающая сгенерированные дом-элементы
+   * @param  {type} data данные полученные с сервера
+   */
+  var onLoad = function (data) {
+    var picturesContainer = document.querySelector('.pictures');
+    var fragment = document.createDocumentFragment();
 
-  for (var y = 0; y < window.data.photos.length; y++) {
-    fragment.appendChild(generateDomElement(window.data.photos[y]));
-  }
-  picturesContainer.appendChild(fragment);
+    for (var y = 0; y < data.length; y++) {
+      fragment.appendChild(generateDomElement(data[y], y));
+    }
+    picturesContainer.appendChild(fragment);
+  };
+
+  window.backend.load(onLoad);
+
 })();
