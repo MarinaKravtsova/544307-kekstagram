@@ -12,13 +12,16 @@
     xhr.send(data);
 
     xhr.addEventListener('load', function () {
-      onLoad(xhr.response);
+      if (xhr.status === 200) {
+        onLoad();
+      } else {
+        onError('Произошла ошибка соединения');
+      }
     });
 
-  //  xhr.addEventListener('error', function () {
-  //    onError('Произошла ошибка соединения');
-  //  });
-
+    xhr.addEventListener('error', function () {
+      onError('Произошла ошибка соединения');
+    });
   };
 
   var receivedPhotos;
@@ -43,13 +46,11 @@
     xhr.addEventListener('error', function () {
       onError('Произошла ошибка соединения');
     });
-
-
   };
 
   window.backend = {
     upLoad: upLoad,
     load: load,
-    receivedPhotos: receivedPhotos
+    receivedPhotos: receivedPhotos,
   };
 })();
