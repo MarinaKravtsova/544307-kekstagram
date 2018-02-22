@@ -36,6 +36,9 @@
     picturesContainer.appendChild(fragment);
   };
 
-  window.backend.load(onLoad);
+  var onError = function (message) {
+    window.error.error(message);
+  };
 
+  window.backend.load(onLoad, onError);
 })();
