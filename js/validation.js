@@ -13,6 +13,8 @@
   uploadFormSubmit.addEventListener('click', function () {
     if (error === true) {
       uploadFormHashtags.setAttribute('style', 'border' + ':' + '3px solid red');
+    } else {
+      uploadFormHashtags.setAttribute('style', 'border' + ':' + 'none');
     }
   });
 
@@ -27,6 +29,7 @@
   };
 
   uploadFormHashtags.addEventListener('input', function () {
+    error = false;
     uploadFormHashtags.setCustomValidity('');
     var hashtagArr = uploadFormHashtags.value;
     var hashtagArrSplit = hashtagArr.split('#');
@@ -69,4 +72,8 @@
       setNotice('Хэш-теги должны начинаться с символа # (решётка)');
     }
   });
+
+  window.validation = {
+    uploadFormHashtags: uploadFormHashtags
+  };
 })();
