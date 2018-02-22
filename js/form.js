@@ -150,6 +150,9 @@
     applyFilter('effect-none', '', effectImage);
     uploadEffectLevel.classList.add('hidden');
     document.querySelector('#upload-effect-none').checked = true;
+    window.validation.uploadFormHashtags.value = '';
+    window.validation.uploadFormHashtags.setAttribute('style', 'border' + ':' + 'none');
+    uploadFormDescription.value = '';
   };
 
   var uploadFormClose = document.querySelector('#upload-cancel');
@@ -220,5 +223,19 @@
     document.addEventListener('mouseup', onMouseUp);
   });
 
+  // ****************отправка данных
+  var onError = function (message) {
+    window.error.error(message);
+  };
 
+  var onLoad = function () {
+    closeUploadForm();
+  };
+
+  var form = document.querySelector('.upload-form');
+
+  form.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    window.backend.upLoad(new FormData(form), onLoad, onError);
+  });
 })();
