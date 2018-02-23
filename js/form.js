@@ -186,7 +186,6 @@
   // ****************перемещение слайдера
   var uploadEffectPin = document.querySelector('.upload-effect-level-pin');
   var uploadEffectVal = document.querySelector('.upload-effect-level-val');
-  var uploadEffectLevelLine = document.querySelector('.upload-effect-level-line');
 
   uploadEffectPin.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
