@@ -8,7 +8,7 @@
   document.querySelector('.pictures').addEventListener('click', function (evt) {
     if (evt.target.tagName === 'IMG') {
       var id = evt.target.getAttribute('data-id');
-      generateFullScreenPhoto(id);
+      generateFullScreenPhoto(id, window.gallery.dataPhotos);
     }
   });
 
@@ -33,14 +33,15 @@
 
   /**
   * Функция генерирущая фото на весь экран
-  * @param  {type} index
+  * @param  {type} index  порядковый номер фотографии
+  * @param  {type} dataPhotos массив фотографий
   */
-  var generateFullScreenPhoto = function (index) {
+  var generateFullScreenPhoto = function (index, dataPhotos) {
     userDialog = document.querySelector('.gallery-overlay');
     userDialog.classList.remove('hidden');
 
-    userDialog.querySelector('.gallery-overlay-image').setAttribute('src', window.backend.receivedPhotos[index].url);
-    userDialog.querySelector('.likes-count').textContent = window.backend.receivedPhotos[index].likes;
-    userDialog.querySelector('.comments-count').textContent = window.backend.receivedPhotos[index].comments.length;
+    userDialog.querySelector('.gallery-overlay-image').setAttribute('src', dataPhotos[index].url);
+    userDialog.querySelector('.likes-count').textContent = dataPhotos[index].likes;
+    userDialog.querySelector('.comments-count').textContent = dataPhotos[index].comments.length;
   };
 })();
