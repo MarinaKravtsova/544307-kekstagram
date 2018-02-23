@@ -30,7 +30,5 @@
     });
   };
 
-  window.error = {
-    error: error
-  };
+  window.error = error;
 })();
