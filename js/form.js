@@ -41,7 +41,7 @@
   var effectImage;
   var uploadEffectLevel = document.querySelector('.upload-effect-level');
   var uploadResizeControls = document.querySelector('.upload-resize-controls');
-  var uploadEffectControls = document.querySelector('.upload-effect-controls');
+  var uploadEffectControls = document.querySelectorAll('.upload-effect-label');
 
   /**
    * Функция добавляющая ползунок
@@ -55,7 +55,10 @@
     effectImage = document.querySelector('.effect-image-preview');
 
     uploadResizeControls.addEventListener('click', resizeClickHandler);
-    uploadEffectControls.addEventListener('click', filterClickHandler);
+
+    for (var x = 0; x < uploadEffectControls.length; x++) {
+      uploadEffectControls[x].previousElementSibling.addEventListener('click', filterClickHandler);
+    }
 
     applyFilter('effect-none', '', effectImage);
 
@@ -94,16 +97,13 @@
    * @param  {type} evt
    */
   var filterClickHandler = function (evt) {
+    previousPosition = 450;
+    uploadEffectPin.style.left = (EFFECT_MAX) + '%';
+    uploadEffectVal.style.width = (EFFECT_MAX) + '%';
 
-    if (evt.target !== uploadEffectLevel && evt.target !== uploadEffectLevelLine && evt.target !== uploadEffectPin && evt.target !== uploadEffectVal) {
-      previousPosition = 450;
-      uploadEffectPin.style.left = (EFFECT_MAX) + '%';
-      uploadEffectVal.style.width = (EFFECT_MAX) + '%';
-
-      filterName = 'effect-' + evt.target.value;
-      applyFilter(filterName, EFFECT_MAX, effectImage);
-      addEffectLevelLine();
-    }
+    filterName = 'effect-' + evt.target.value;
+    applyFilter(filterName, EFFECT_MAX, effectImage);
+    addEffectLevelLine();
 
     if (evt.target.value === 'none') {
       uploadEffectLevel.classList.add('hidden');
@@ -166,7 +166,9 @@
     setDefaultParameter();
 
     uploadResizeControls.removeEventListener('click', resizeClickHandler);
-    uploadEffectControls.removeEventListener('click', filterClickHandler);
+    for (var x = 0; x < uploadEffectControls.length; x++) {
+      uploadEffectControls[x].previousElementSibling.removeEventListener('click', filterClickHandler);
+    }
   };
 
   uploadFormClose.addEventListener('click', function () {
