@@ -225,7 +225,7 @@
 
   // ****************отправка данных
   var onError = function (message) {
-    window.error.error(message);
+    window.error(message);
   };
 
   var onLoad = function () {
