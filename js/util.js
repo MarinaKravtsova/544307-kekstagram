@@ -28,18 +28,6 @@
   };
 
   /**
-  * Функция генерирующая случайное число от max до min
-  * @param {number} max Максимальное число
-  * @param {number} min Минимальное число
-  * @return {number}
-  */
-  var getRandomNumber = function (max, min) {
-    var RandomNumber = Math.round(Math.random() * (max - min) + min);
-
-    return RandomNumber;
-  };
-
-  /**
    * Функция устраняющая дребезг
    * @param  {type} fun
    */
