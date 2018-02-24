@@ -3,7 +3,7 @@
 (function () {
   var URL_UPLOAD = 'https://js.dump.academy/kekstagram';
   var URL_LOAD = 'https://js.dump.academy/kekstagram/data';
-  var successStatus = 200;
+  var SUCCESS_STATUS = 200;
 
   var upLoad = function (data, onLoad, onError) {
     var xhr = new XMLHttpRequest();
@@ -13,7 +13,7 @@
     xhr.send(data);
 
     xhr.addEventListener('load', function () {
-      if (xhr.status === successStatus) {
+      if (xhr.status === SUCCESS_STATUS) {
         onLoad();
       } else {
         onError('Произошла ошибка соединения');
@@ -35,7 +35,7 @@
     xhr.send();
 
     xhr.addEventListener('load', function () {
-      if (xhr.status === successStatus) {
+      if (xhr.status === SUCCESS_STATUS) {
         receivedPhotos = xhr.response;
         onLoad(receivedPhotos);
       } else {
