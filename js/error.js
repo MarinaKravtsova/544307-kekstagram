@@ -2,6 +2,7 @@
 
 (function () {
   var error = function (message) {
+
     var container = document.createElement('div');
 
     container.innerHTML = '<div class="my-container" style="position: absolute; margin-left: 35%; z-index: 10; width: 400px; height: 200px; background-color: #c0c0c0;">' +
@@ -15,6 +16,7 @@
 
     var closeContainer = function () {
       closeMyContainer.classList.add('hidden');
+      container.remove();
     };
 
     closeMyMessage.addEventListener('click', function () {
