@@ -5,6 +5,12 @@
   var URL_LOAD = 'https://js.dump.academy/kekstagram/data';
   var SUCCESS_STATUS = 200;
 
+  /**
+   * Функция загружающая данные на сервер
+   * @param  {type} data    данные формы, которые отправляются на сервер
+   * @param  {type} onLoad  функция обратного вызова, которая срабатывает при успешном выполнении запроса
+   * @param  {type} onError функция обратного вызова, которая срабатывает при неуспешном выполнении запроса
+   */
   var upLoad = function (data, onLoad, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
@@ -27,6 +33,11 @@
 
   var receivedPhotos;
 
+  /**
+   * Функция получающая данные с сервер
+   * @param  {type} onLoad  функция обратного вызова, которая срабатывает при успешном выполнении запроса
+   * @param  {type} onError  функция обратного вызова, которая срабатывает при неуспешном выполнении запроса
+   */
   var load = function (onLoad, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
