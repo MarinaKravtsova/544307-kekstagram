@@ -1,6 +1,8 @@
 'use strict';
 
 (function () {
+  var DEBOUNCE_INTERVAL = 500; // ms
+
   var pictureTemplate = document.querySelector('#picture-template').content;
 
   /**
@@ -26,7 +28,7 @@
    * Функция отрисовывающая сгенерированные дом-элементы
    * @param  {type} data данные полученные с сервера
    */
-  var onLoad = function (data) {
+  var drawElements = function (data) {
     var picturesContainer = document.querySelector('.pictures');
     var fragment = document.createDocumentFragment();
 
@@ -47,7 +49,7 @@
     window.error(message);
   };
 
-  window.backend.load(onLoad, onError);
+  window.backend.load(drawElements, onError);
 
   // ********************сортировка
   var dataPhotos;
@@ -55,20 +57,34 @@
   var popular = document.querySelector('#filter-popular');
   var discussed = document.querySelector('#filter-discussed');
   var random = document.querySelector('#filter-random');
+  var filtersItem = document.querySelectorAll('.filters-item');
 
-  recommend.addEventListener('click', function () {
-    dataPhotos = window.backend.receivedPhotos;
+  for (var j = 0; j < filtersItem.length; j++) {
+    filtersItem[j].addEventListener('keydown', function (evt) {
 
+      window.util.isEnterEvent(evt, function () {
+
+        evt.target.click();
+      });
+    });
+  }
+
+  var showReceivedPhotos = function () {
+    dataPhotos = window.backend.receivedPhotos.slice();
     window.gallery.dataPhotos = dataPhotos;
 
     window.util.debounce(function () {
-      onLoad(dataPhotos);
-    });
+      drawElements(dataPhotos);
+    }, DEBOUNCE_INTERVAL);
+  };
+
+  recommend.addEventListener('click', function () {
+    showReceivedPhotos();
   });
 
   popular.addEventListener('click', function () {
 
-    dataPhotos = window.backend.receivedPhotos.slice();
+    showReceivedPhotos();
 
     for (var x = 0; x < dataPhotos.length; x++) {
       for (var y = 0; y < dataPhotos.length - 1; y++) {
@@ -79,16 +95,10 @@
         }
       }
     }
-
-    window.gallery.dataPhotos = dataPhotos;
-
-    window.util.debounce(function () {
-      onLoad(dataPhotos);
-    });
   });
 
   discussed.addEventListener('click', function () {
-    dataPhotos = window.backend.receivedPhotos.slice();
+    showReceivedPhotos();
 
     for (var x = 0; x < dataPhotos.length; x++) {
       for (var y = 0; y < dataPhotos.length - 1; y++) {
@@ -99,28 +109,16 @@
         }
       }
     }
-
-    window.gallery.dataPhotos = dataPhotos;
-
-    window.util.debounce(function () {
-      onLoad(dataPhotos);
-    });
   });
 
   random.addEventListener('click', function () {
-    dataPhotos = window.backend.receivedPhotos.slice();
+    showReceivedPhotos();
 
     var compareRandom = function () {
       return Math.random() - 0.5;
     };
 
     dataPhotos.sort(compareRandom);
-
-    window.gallery.dataPhotos = dataPhotos;
-
-    window.util.debounce(function () {
-      onLoad(dataPhotos);
-    });
   });
 
   window.gallery = {
