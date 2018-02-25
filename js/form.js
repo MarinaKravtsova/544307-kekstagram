@@ -41,7 +41,7 @@
   var effectImage;
   var uploadEffectLevel = document.querySelector('.upload-effect-level');
   var uploadResizeControls = document.querySelector('.upload-resize-controls');
-  var uploadEffectControls = document.querySelector('.upload-effect-controls');
+  var uploadEffectControls = document.querySelectorAll('.upload-effect-label');
 
   /**
    * Функция добавляющая ползунок
@@ -55,13 +55,24 @@
     effectImage = document.querySelector('.effect-image-preview');
 
     uploadResizeControls.addEventListener('click', resizeClickHandler);
-    uploadEffectControls.addEventListener('click', filterClickHandler);
+
+    for (var x = 0; x < uploadEffectControls.length; x++) {
+      uploadEffectControls[x].previousElementSibling.addEventListener('click', filterClickHandler);
+    }
 
     applyFilter('effect-none', '', effectImage);
 
     uploadResizeControlsValue.setAttribute('value', RESIZE_DEFAULT + '%');
 
     uploadEffectLevel.classList.add('hidden');
+  });
+
+  document.querySelector('.upload-file').addEventListener('keydown', function (evt) {
+
+    window.util.isEnterEvent(evt, function () {
+
+      document.querySelector('.upload-file').click();
+    });
   });
 
   /**
@@ -94,21 +105,28 @@
    * @param  {type} evt
    */
   var filterClickHandler = function (evt) {
+    previousPosition = 450;
+    uploadEffectPin.style.left = (EFFECT_MAX) + '%';
+    uploadEffectVal.style.width = (EFFECT_MAX) + '%';
 
-    if (evt.target !== uploadEffectLevel && evt.target !== uploadEffectLevelLine && evt.target !== uploadEffectPin && evt.target !== uploadEffectVal) {
-      previousPosition = 450;
-      uploadEffectPin.style.left = (EFFECT_MAX) + '%';
-      uploadEffectVal.style.width = (EFFECT_MAX) + '%';
-
-      filterName = 'effect-' + evt.target.value;
-      applyFilter(filterName, EFFECT_MAX, effectImage);
-      addEffectLevelLine();
-    }
+    filterName = 'effect-' + evt.target.value;
+    applyFilter(filterName, EFFECT_MAX, effectImage);
+    addEffectLevelLine();
 
     if (evt.target.value === 'none') {
       uploadEffectLevel.classList.add('hidden');
     }
   };
+
+  for (var j = 0; j < uploadEffectControls.length; j++) {
+    uploadEffectControls[j].addEventListener('keydown', function (evt) {
+
+      window.util.isEnterEvent(evt, function () {
+
+        evt.target.click();
+      });
+    });
+  }
 
   /**
    * Функция обрабатывающая клики на регулировщики размера
@@ -166,7 +184,9 @@
     setDefaultParameter();
 
     uploadResizeControls.removeEventListener('click', resizeClickHandler);
-    uploadEffectControls.removeEventListener('click', filterClickHandler);
+    for (var x = 0; x < uploadEffectControls.length; x++) {
+      uploadEffectControls[x].previousElementSibling.removeEventListener('click', filterClickHandler);
+    }
   };
 
   uploadFormClose.addEventListener('click', function () {
@@ -184,7 +204,15 @@
   // ****************перемещение слайдера
   var uploadEffectPin = document.querySelector('.upload-effect-level-pin');
   var uploadEffectVal = document.querySelector('.upload-effect-level-val');
-  var uploadEffectLevelLine = document.querySelector('.upload-effect-level-line');
+  var uploadEffectValue = document.querySelector('.upload-effect-level-value');
+
+  uploadEffectPin.addEventListener('keydown', function (evt) {
+
+    window.util.isEnterEvent(evt, function () {
+
+      uploadEffectPin.click();
+    });
+  });
 
   uploadEffectPin.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
@@ -210,6 +238,7 @@
       applyFilter(filterName, cordinateX, effectImage);
 
       uploadEffectVal.style.width = (cordinateX) + '%';
+      uploadEffectValue.setAttribute('value', cordinateX);
     };
 
     var onMouseUp = function (upEvt) {
@@ -225,7 +254,7 @@
 
   // ****************отправка данных
   var onError = function (message) {
-    window.error.error(message);
+    window.error(message);
   };
 
   var onLoad = function () {
