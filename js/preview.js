@@ -5,11 +5,22 @@
  * ******соответствующими данными / открытие и закрытие его
  */
 (function () {
-  document.querySelector('.pictures').addEventListener('click', function (evt) {
+  var pictures = document.querySelector('.pictures');
+
+  pictures.addEventListener('click', function (evt) {
     if (evt.target.tagName === 'IMG') {
       var id = evt.target.getAttribute('data-id');
       generateFullScreenPhoto(id, window.gallery.dataPhotos);
     }
+  });
+
+  pictures.addEventListener('keydown', function (evt) {
+    window.util.isEnterEvent(evt, function () {
+      if (evt.target.querySelector('IMG').tagName === 'IMG') {
+        var id = evt.target.querySelector('IMG').getAttribute('data-id');
+        generateFullScreenPhoto(id, window.gallery.dataPhotos);
+      }
+    });
   });
 
   var galleryOverlayClose = document.querySelector('.gallery-overlay-close');
@@ -27,7 +38,7 @@
     window.util.isEscEvent(evt, closeGalleryOverlay);
   });
 
-  document.addEventListener('keydown', function (evt) {
+  galleryOverlayClose.addEventListener('keydown', function (evt) {
     window.util.isEnterEvent(evt, closeGalleryOverlay);
   });
 
