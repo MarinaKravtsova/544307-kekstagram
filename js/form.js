@@ -67,6 +67,14 @@
     uploadEffectLevel.classList.add('hidden');
   });
 
+  document.querySelector('.upload-file').addEventListener('keydown', function (evt) {
+
+    window.util.isEnterEvent(evt, function () {
+
+      document.querySelector('.upload-file').click();
+    });
+  });
+
   /**
    ****** Редактирование размера изображения
    */
@@ -109,6 +117,16 @@
       uploadEffectLevel.classList.add('hidden');
     }
   };
+
+  for (var j = 0; j < uploadEffectControls.length; j++) {
+    uploadEffectControls[j].addEventListener('keydown', function (evt) {
+
+      window.util.isEnterEvent(evt, function () {
+
+        evt.target.click();
+      });
+    });
+  }
 
   /**
    * Функция обрабатывающая клики на регулировщики размера
@@ -186,6 +204,15 @@
   // ****************перемещение слайдера
   var uploadEffectPin = document.querySelector('.upload-effect-level-pin');
   var uploadEffectVal = document.querySelector('.upload-effect-level-val');
+  var uploadEffectValue = document.querySelector('.upload-effect-level-value');
+
+  uploadEffectPin.addEventListener('keydown', function (evt) {
+
+    window.util.isEnterEvent(evt, function () {
+
+      uploadEffectPin.click();
+    });
+  });
 
   uploadEffectPin.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
@@ -211,6 +238,7 @@
       applyFilter(filterName, cordinateX, effectImage);
 
       uploadEffectVal.style.width = (cordinateX) + '%';
+      uploadEffectValue.setAttribute('value', cordinateX);
     };
 
     var onMouseUp = function (upEvt) {
