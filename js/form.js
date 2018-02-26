@@ -29,15 +29,8 @@
   var EFFECT_MIN = 0;
   var EFFECT_MAX_PX = 450;
 
-  /**
- ******** Загрузка изображения и показ формы редактирования
- */
   var uploadFile = document.querySelector('#upload-file');
   var uploadForm = document.querySelector('.upload-overlay');
-
-  /**
-   ********** Применение эффекта для изображения
-   */
   var effectImage;
   var uploadEffectLevel = document.querySelector('.upload-effect-level');
   var uploadResizeControls = document.querySelector('.upload-resize-controls');
@@ -75,9 +68,6 @@
     });
   });
 
-  /**
-   ****** Редактирование размера изображения
-   */
   var uploadResizeControlsDec = document.querySelector('.upload-resize-controls-button-dec');
   var uploadResizeControlsInc = document.querySelector('.upload-resize-controls-button-inc');
   var uploadResizeControlsValue = document.querySelector('.upload-resize-controls-value');
@@ -86,7 +76,6 @@
 
   /**
  * Функция применяющая к изображению фильтр и размер
- *
  * @param  {type} name    название применяемого фильтра
  * @param  {type} value   величина применяемого фильтра
  * @param  {type} element загружаемая фотография
@@ -141,6 +130,10 @@
     effectImage.style.transform = 'scale(' + uploadResizeValue / RESIZE_DEFAULT + ')';
   };
 
+
+  /**
+   * Функция увеличивающая размер фото
+   */
   var resizeControlsDec = function () {
     if (uploadResizeValue > RESIZE_MIN && uploadResizeValue <= RESIZE_MAX) {
       uploadResizeValue = uploadResizeValue - STEP;
@@ -150,6 +143,9 @@
     uploadResizeControlsValue.setAttribute('value', uploadResizeValue + '%');
   };
 
+  /**
+   * Функция уменьшающая размер фото
+   */
   var resizeControlsInc = function () {
     if (uploadResizeValue >= RESIZE_MIN && uploadResizeValue < RESIZE_MAX) {
       uploadResizeValue = +uploadResizeValue + STEP;
@@ -163,7 +159,7 @@
    * Функция устанавливающая настройки поумолчанию
    */
   var setDefaultParameter = function () {
-    uploadFile.value = ''; // сбрасывает значение поля выбора файла #upload-file
+    uploadFile.value = '';
     uploadResizeValue = RESIZE_DEFAULT;
     applyFilter('effect-none', '', effectImage);
     uploadEffectLevel.classList.add('hidden');
@@ -175,9 +171,10 @@
 
   var uploadFormClose = document.querySelector('#upload-cancel');
 
+
   /**
- * Функция закрытия формы
- */
+   * Функция закрытия формы
+   */
   var closeUploadForm = function () {
     uploadForm.classList.add('hidden');
 
@@ -201,7 +198,6 @@
     }
   });
 
-  // ****************перемещение слайдера
   var uploadEffectPin = document.querySelector('.upload-effect-level-pin');
   var uploadEffectVal = document.querySelector('.upload-effect-level-val');
   var uploadEffectValue = document.querySelector('.upload-effect-level-value');
@@ -252,19 +248,10 @@
     document.addEventListener('mouseup', onMouseUp);
   });
 
-  // ****************отправка данных
-  var onError = function (message) {
-    window.error(message);
-  };
-
-  var onLoad = function () {
-    closeUploadForm();
-  };
-
   var form = document.querySelector('.upload-form');
 
   form.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    window.backend.upLoad(new FormData(form), onLoad, onError);
+    window.backend.upload(new FormData(form), closeUploadForm, window.error);
   });
 })();
