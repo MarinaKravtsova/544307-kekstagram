@@ -3,20 +3,18 @@
 (function () {
   var HASHTAG_MAX = 5;
   var HASHTAG_MAX_LONG = 20;
-  /*
- * *********2.3. Хэш-теги
- */
+
   var uploadFormHashtags = document.querySelector('.upload-form-hashtags');
   var error = false;
-  var uploadFormSubmit = document.querySelector('.upload-form-submit');
+  var uploadFormSubmitButton = document.querySelector('.upload-form-submit');
 
-  uploadFormSubmit.addEventListener('click', function () {
-    if (error === true) {
-      uploadFormHashtags.setAttribute('style', 'border' + ':' + '3px solid red');
-    } else {
-      uploadFormHashtags.setAttribute('style', 'border' + ':' + 'none');
-    }
+  uploadFormSubmitButton.addEventListener('click', function () {
+    setBorderStyle(uploadFormHashtags, error ? '3px solid red' : 'none');
   });
+
+  var setBorderStyle = function (elem, rule) {
+    elem.setAttribute('style', 'border' + ':' + rule);
+  };
 
   /**
    * Функция генерирующая сообщение, которое указывает на несоответствие ограничениям
@@ -43,10 +41,13 @@
         setNotice('Хэш-тег не должен превышать 20-ти символов');
       }
 
-      for (var b = x + 1; b < hashtagArrSplit.length; b++) {
-        if (hashtagArrSplit[x].toUpperCase().slice(0, -1) === hashtagArrSplit[b].toUpperCase() || hashtagArrSplit[x].toUpperCase().slice(0, -1) === hashtagArrSplit[b].toUpperCase().slice(0, -1)) {
+      for (var b = x + 1; b < hashtagArrSplit.length - 1; b++) {
+        if (hashtagArrSplit[x].toUpperCase().slice(0, -1) === hashtagArrSplit[b].toUpperCase().slice(0, -1)) {
           setNotice('Хэш-теги не должны повторяться');
         }
+      }
+      if (hashtagArrSplit[x].toUpperCase().slice(0, -1) === hashtagArrSplit[hashtagArrSplit.length - 1].toUpperCase() || (hashtagArrSplit[hashtagArrSplit.length - 1].charAt(hashtagArrSplit[hashtagArrSplit.length - 1].length - 1) === ' ' && hashtagArrSplit[x].toUpperCase().slice(0, -1) === hashtagArrSplit[hashtagArrSplit.length - 1].toUpperCase().slice(0, -1))) {
+        setNotice('Хэш-теги не должны повторяться');
       }
 
       var hashtagArrSign = hashtagArrSplit[x].split('');
