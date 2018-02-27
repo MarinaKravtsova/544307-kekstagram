@@ -11,7 +11,7 @@
    * @param  {type} onLoad  функция обратного вызова, которая срабатывает при успешном выполнении запроса
    * @param  {type} onError функция обратного вызова, которая срабатывает при неуспешном выполнении запроса
    */
-  var upLoad = function (data, onLoad, onError) {
+  var upload = function (data, onLoad, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
     xhr.open('POST', URL_UPLOAD);
@@ -61,7 +61,7 @@
   };
 
   window.backend = {
-    upLoad: upLoad,
+    upload: upload,
     load: load,
     receivedPhotos: receivedPhotos,
   };

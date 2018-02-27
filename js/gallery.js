@@ -45,13 +45,8 @@
     filters.classList.remove('filters-inactive');
   };
 
-  var onError = function (message) {
-    window.error(message);
-  };
+  window.backend.load(drawElements, window.error);
 
-  window.backend.load(drawElements, onError);
-
-  // ********************сортировка
   var dataPhotos;
   var recommend = document.querySelector('#filter-recommend');
   var popular = document.querySelector('#filter-popular');

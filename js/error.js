@@ -1,7 +1,11 @@
 'use strict';
 
 (function () {
-  var error = function (message) {
+  /**
+   * Функция показывающая окно с сообщением об ошибки
+   * @param  {type} message
+   */
+  var showErrorMessage = function (message) {
 
     var container = document.createElement('div');
 
@@ -32,5 +36,5 @@
     });
   };
 
-  window.error = error;
+  window.error = showErrorMessage;
 })();
