@@ -58,6 +58,8 @@
     uploadResizeControlsValue.setAttribute('value', RESIZE_DEFAULT + '%');
 
     uploadEffectLevel.classList.add('hidden');
+
+    document.addEventListener('keydown', closeFormEsc);
   });
 
   document.querySelector('.upload-file').addEventListener('keydown', function (evt) {
@@ -94,7 +96,7 @@
    * @param  {type} evt
    */
   var filterClickHandler = function (evt) {
-    previousPosition = 450;
+    previousPosition = EFFECT_MAX_PX;
     uploadEffectPin.style.left = (EFFECT_MAX) + '%';
     uploadEffectVal.style.width = (EFFECT_MAX) + '%';
 
@@ -129,7 +131,6 @@
     }
     effectImage.style.transform = 'scale(' + uploadResizeValue / RESIZE_DEFAULT + ')';
   };
-
 
   /**
    * Функция увеличивающая размер фото
@@ -171,7 +172,6 @@
 
   var uploadFormClose = document.querySelector('#upload-cancel');
 
-
   /**
    * Функция закрытия формы
    */
@@ -184,6 +184,7 @@
     for (var x = 0; x < uploadEffectControls.length; x++) {
       uploadEffectControls[x].previousElementSibling.removeEventListener('click', filterClickHandler);
     }
+    document.removeEventListener('keydown', closeFormEsc);
   };
 
   uploadFormClose.addEventListener('click', function () {
@@ -192,11 +193,15 @@
 
   var uploadFormDescription = document.querySelector('.upload-form-description');
 
-  document.addEventListener('keydown', function (evt) {
+  /**
+   * Функция закрытия формы клавишей Esc
+   * @param  {type} evt
+   */
+  var closeFormEsc = function (evt) {
     if (uploadFormDescription !== document.activeElement) {
       window.util.isEscEvent(evt, closeUploadForm);
     }
-  });
+  };
 
   var uploadEffectPin = document.querySelector('.upload-effect-level-pin');
   var uploadEffectVal = document.querySelector('.upload-effect-level-val');
