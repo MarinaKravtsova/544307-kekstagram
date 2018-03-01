@@ -34,9 +34,10 @@
 
     picturesContainer.innerHTML = '';
 
-    for (var y = 0; y < data.length; y++) {
+     data.forEach(function (x, y) {
       fragment.appendChild(generateDomElement(data[y], y));
-    }
+    });
+
     picturesContainer.appendChild(fragment);
     window.gallery.dataPhotos = data;
 
@@ -81,7 +82,17 @@
 
     showReceivedPhotos();
 
-    for (var x = 0; x < dataPhotos.length; x++) {
+  dataPhotos.forEach(function () {
+      dataPhotos.forEach(function (item, y, arr) {
+          if (arr[y].likes < arr[y + 1].likes) {
+            var swap = arr[y + 1];
+            arr[y + 1] = arr[y];
+            arr[y] = swap;
+          }
+        });
+      });
+    });
+  /*   for (var x = 0; x < dataPhotos.length; x++) {
       for (var y = 0; y < dataPhotos.length - 1; y++) {
         if (dataPhotos[y].likes < dataPhotos[y + 1].likes) {
           var swap = dataPhotos[y + 1];
@@ -90,7 +101,7 @@
         }
       }
     }
-  });
+  });*/
 
   discussed.addEventListener('click', function () {
     showReceivedPhotos();
