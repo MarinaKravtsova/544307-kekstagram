@@ -34,9 +34,10 @@
 
     picturesContainer.innerHTML = '';
 
-    for (var y = 0; y < data.length; y++) {
+    data.forEach(function (x, y) {
       fragment.appendChild(generateDomElement(data[y], y));
-    }
+    });
+
     picturesContainer.appendChild(fragment);
     window.gallery.dataPhotos = data;
 
@@ -78,32 +79,19 @@
   });
 
   popular.addEventListener('click', function () {
-
     showReceivedPhotos();
 
-    for (var x = 0; x < dataPhotos.length; x++) {
-      for (var y = 0; y < dataPhotos.length - 1; y++) {
-        if (dataPhotos[y].likes < dataPhotos[y + 1].likes) {
-          var swap = dataPhotos[y + 1];
-          dataPhotos[y + 1] = dataPhotos[y];
-          dataPhotos[y] = swap;
-        }
-      }
-    }
+    dataPhotos.sort(function (a, b) {
+      return b.likes - a.likes;
+    });
   });
 
   discussed.addEventListener('click', function () {
     showReceivedPhotos();
 
-    for (var x = 0; x < dataPhotos.length; x++) {
-      for (var y = 0; y < dataPhotos.length - 1; y++) {
-        if (dataPhotos[y].comments.length < dataPhotos[y + 1].comments.length) {
-          var swap = dataPhotos[y + 1];
-          dataPhotos[y + 1] = dataPhotos[y];
-          dataPhotos[y] = swap;
-        }
-      }
-    }
+    dataPhotos.sort(function (a, b) {
+      return b.comments.length - a.comments.length;
+    });
   });
 
   random.addEventListener('click', function () {
