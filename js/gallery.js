@@ -34,7 +34,7 @@
 
     picturesContainer.innerHTML = '';
 
-     data.forEach(function (x, y) {
+    data.forEach(function (x, y) {
       fragment.appendChild(generateDomElement(data[y], y));
     });
 
@@ -79,42 +79,19 @@
   });
 
   popular.addEventListener('click', function () {
-
     showReceivedPhotos();
 
-  dataPhotos.forEach(function () {
-      dataPhotos.forEach(function (item, y, arr) {
-          if (arr[y].likes < arr[y + 1].likes) {
-            var swap = arr[y + 1];
-            arr[y + 1] = arr[y];
-            arr[y] = swap;
-          }
-        });
-      });
+    dataPhotos.sort(function (a, b) {
+      return b.likes - a.likes;
     });
-  /*   for (var x = 0; x < dataPhotos.length; x++) {
-      for (var y = 0; y < dataPhotos.length - 1; y++) {
-        if (dataPhotos[y].likes < dataPhotos[y + 1].likes) {
-          var swap = dataPhotos[y + 1];
-          dataPhotos[y + 1] = dataPhotos[y];
-          dataPhotos[y] = swap;
-        }
-      }
-    }
-  });*/
+  });
 
   discussed.addEventListener('click', function () {
     showReceivedPhotos();
 
-    for (var x = 0; x < dataPhotos.length; x++) {
-      for (var y = 0; y < dataPhotos.length - 1; y++) {
-        if (dataPhotos[y].comments.length < dataPhotos[y + 1].comments.length) {
-          var swap = dataPhotos[y + 1];
-          dataPhotos[y + 1] = dataPhotos[y];
-          dataPhotos[y] = swap;
-        }
-      }
-    }
+    dataPhotos.sort(function (a, b) {
+      return b.comments.length - a.comments.length;
+    });
   });
 
   random.addEventListener('click', function () {
